@@ -1,31 +1,34 @@
 from django.db import models
+from django.utils import timezone
 
 class OfficeManager(models.Model):
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    phone = models.CharField(max_length=15,unique=True)
-    birth_date = models.DateField(null=True)
-    code_meli = models.CharField(max_length=10,null=True)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    phone = models.CharField(max_length=15, unique=True)
+    birth_date = models.DateField(null=True, blank=True)
+    code_meli = models.CharField(max_length=10, null=True, blank=True)
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
 
 class OfficeUser(models.Model):
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    phone = models.CharField(max_length=15,unique=True)
-    home_phone = models.CharField(max_length=15,unique=True,null=True)
-    birth_date = models.DateField(null=True)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    phone = models.CharField(max_length=15, unique=True)
+    home_phone = models.CharField(max_length=15, unique=True, null=True, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
     code_meli = models.CharField(max_length=10)
-    office_admin = models.ForeignKey(OfficeManager,on_delete=models.CASCADE)
+    office_admin = models.ForeignKey(OfficeManager, on_delete=models.CASCADE, null=True, blank=True)
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
 
-class  Clock(models.Model):
-    entry_to_office = models.DateTimeField(auto_now=True)
-    exit_from_office = models.DateTimeField(auto_now=True)
-    wait_time_start = models.DateTimeField(auto_now=True)
-    wait_time_finish = models.DateTimeField(auto_now=True)
-    office_user = models.ForeignKey( OfficeUser ,on_delete=models.CASCADE)
+class Clock(models.Model):
+    entry_to_office = models.DateTimeField(null=True, blank=True)
+    exit_from_office = models.DateTimeField(null=True, blank=True)
+    wait_time_start = models.DateTimeField(null=True, blank=True)
+    wait_time_finish = models.DateTimeField(null=True, blank=True)
+    office_user = models.ForeignKey(OfficeUser, on_delete=models.CASCADE, null=True, blank=True)
 
-
-class Sallary(models.Model):
-    monthly = models.IntegerField(max_length=12,null=True)
-    
+    def __str__(self):
+        return f"{self.office_user} - {self.entry_to_office}"
