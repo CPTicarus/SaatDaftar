@@ -1,7 +1,10 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
+
 
 class OfficeManager(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     phone = models.CharField(max_length=15, unique=True)

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Office User Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h2>Welcome, {{ user.username }}</h2>
+
+    <button id="register-entry">Register Entry</button>
+    <button id="start-temporary-exit">Start Temporary Exit</button>
+    <button id="register-exit">Register Exit</button>
+
+    <p id="status-message"></p>
+
+    <script type="text/javascript">
+        function handleAjax(url, successMessage) {
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    $('#status-message').text(response.message).css('color', 'green');
+                },
+                error: function(response) {
+                    $('#status-message').text(response.responseJSON.message).css('color', 'red');
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            $('#register-entry').click(function() {
+                handleAjax("{% url 'register_entry' %}", "Entry time registered.");
+            });
+
+            $('#start-temporary-exit').click(function() {
+                handleAjax("{% url 'start_temporary_exit' %}", "Temporary exit time started.");
+            });
+
+            $('#register-exit').click(function() {
+                handleAjax("{% url 'register_exit' %}", "Exit time registered.");
+            });
+        });
+    </script>
+</body>
+</html>
