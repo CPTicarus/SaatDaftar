@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Office User Page</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">  <!-- Add this line -->
 </head>
 <body>
     <h1>Welcome, {{ user.first_name }} {{ user.last_name }}</h1>
 
     <button id="register-entry-btn">Register Entry</button>
-
     <button id="register-exit-btn">Register Exit</button>
 
     <script>
+        // Get the CSRF token from the meta tag
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
         document.getElementById("register-entry-btn").onclick = function() {
             fetch("{% url 'register_entry' %}", {
                 method: "POST",
                 headers: {
-                    "X-CSRFToken": "{{ csrf_token }}",
+                    "X-CSRFToken": csrfToken,
                     "Content-Type": "application/json"
                 }
             }).then(response => response.json()).then(data => {
@@ -28,7 +31,7 @@
             fetch("{% url 'register_exit' %}", {
                 method: "POST",
                 headers: {
-                    "X-CSRFToken": "{{ csrf_token }}",
+                    "X-CSRFToken": csrfToken,
                     "Content-Type": "application/json"
                 }
             }).then(response => response.json()).then(data => {
@@ -38,3 +41,4 @@
     </script>
 </body>
 </html>
+

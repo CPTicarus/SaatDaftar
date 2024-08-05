@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Office User</title>
+</head>
+<body>
+    <h1>Add New Employee</h1>
+    
+    <!-- Form to add new office user -->
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Render form fields as paragraphs -->
+        <button type="submit">Create Employee</button>
+    </form>
+
+    <a href="{% url 'office_manager_page' %}">Back to Manager Page</a>
+</body>
+</html>

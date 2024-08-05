@@ -23,7 +23,9 @@ class OfficeUser(models.Model):
     birth_date = models.DateField(null=True, blank=True)
     code_meli = models.CharField(max_length=10)
     office_admin = models.ForeignKey(OfficeManager, on_delete=models.CASCADE, null=True, blank=True) # remove null, blank = true
-    #TODO = add pic, code_personely, 
+    staff_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    staff_pic = models.ImageField(upload_to='staff_pics/', null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

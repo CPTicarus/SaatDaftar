@@ -2,18 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Office Manager Page</title>
 </head>
 <body>
     <h1>Welcome, {{ office_manager.first_name }} {{ office_manager.last_name }}</h1>
-
-    <h2>Your Employees:</h2>
+    
+    <h2>Your Employees</h2>
     <ul>
         {% for employee in employees %}
             <li>{{ employee.first_name }} {{ employee.last_name }} - Phone: {{ employee.phone }}</li>
-        {% empty %}
-            <li>No employees assigned to you.</li>
         {% endfor %}
     </ul>
+
+    <h2>Add New Employee</h2>
+    <a href="{% url 'add_office_user' %}">
+        <button type="button">Add Personal</button>
+    </a>
 </body>
 </html>

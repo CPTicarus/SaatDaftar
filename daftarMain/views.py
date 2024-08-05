@@ -3,6 +3,8 @@ from django.utils import timezone
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Clock, OfficeUser, OfficeManager
+from .forms import OfficeUserForm
+from django.contrib.auth.models import User 
 
 @login_required
 def dashboard(request):
@@ -49,12 +51,51 @@ def register_exit(request):
 
 @login_required
 def office_manager_page(request):
-    office_manager = get_object_or_404(OfficeManager, user=request.user)    
+    office_manager = get_object_or_404(OfficeManager, user=request.user)
     employees = OfficeUser.objects.filter(office_admin=office_manager)
+
+    if request.method == "POST":
+        form = OfficeUserForm(request.POST)
+        if form.is_valid():
+            office_user = form.save(commit=False)
+            office_user.office_admin = office_manager
+            office_user.save()
+            # Automatically create the user with phone as username and code_meli as password
+            office_user.user = User.objects.create_user(
+                username=office_user.phone,
+                password=office_user.code_meli
+            )
+            office_user.save()
+            return redirect('office_manager_page')  
+    else:
+        form = OfficeUserForm()
 
     context = {
         'office_manager': office_manager,
         'employees': employees,
+        'form': form,  
     }
-    
+
     return render(request, 'office_manager_page.html', context)
+
+@login_required
+def add_office_user(request):
+    office_manager = get_object_or_404(OfficeManager, user=request.user)
+
+    if request.method == "POST":
+        form = OfficeUserForm(request.POST)
+        if form.is_valid():
+            office_user = form.save(commit=False)
+            office_user.office_admin = office_manager
+            office_user.save()
+            # automatically create the user with phone as username and code_meli as password
+            office_user.user = User.objects.create_user(
+                username=office_user.phone,
+                password=office_user.code_meli
+            )
+            office_user.save()
+            return redirect('office_manager_page')
+    else:
+        form = OfficeUserForm()
+
+    return render(request, 'add_office_user.html', {'form': form})

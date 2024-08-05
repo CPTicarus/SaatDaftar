@@ -7,7 +7,6 @@ from .models import OfficeUser, OfficeManager
 @receiver(post_save, sender=OfficeManager)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
-        # Create a new User
         user = User.objects.create_user(
             username=instance.phone,
             password=instance.code_meli,
@@ -15,9 +14,8 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
         instance.user = user
         instance.save()
     else:
-        # Update the existing User
         user = instance.user
         user.username = instance.phone
-        if instance.code_meli:  # Only update the password if it's set
+        if instance.code_meli:  
             user.set_password(instance.code_meli)
         user.save()
