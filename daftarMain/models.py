@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 
 class OfficeManager(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True) # remove null, blank = true
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     phone = models.CharField(max_length=15, unique=True)
@@ -15,13 +15,15 @@ class OfficeManager(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 class OfficeUser(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True) # remove null, blank = true
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     phone = models.CharField(max_length=15, unique=True)
     home_phone = models.CharField(max_length=15, unique=True, null=True, blank=True)
     birth_date = models.DateField(null=True, blank=True)
     code_meli = models.CharField(max_length=10)
-    office_admin = models.ForeignKey(OfficeManager, on_delete=models.CASCADE, null=True, blank=True)
+    office_admin = models.ForeignKey(OfficeManager, on_delete=models.CASCADE, null=True, blank=True) # remove null, blank = true
+    #TODO = add pic, code_personely, 
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -31,7 +33,7 @@ class Clock(models.Model):
     exit_from_office = models.DateTimeField(null=True, blank=True)
     wait_time_start = models.DateTimeField(null=True, blank=True)
     wait_time_finish = models.DateTimeField(null=True, blank=True)
-    office_user = models.ForeignKey(OfficeUser, on_delete=models.CASCADE, null=True, blank=True)
+    office_user = models.ForeignKey(OfficeUser, on_delete=models.CASCADE, null=True, blank=True) # remove null, blank = true
 
     def __str__(self):
         return f"{self.office_user} - {self.entry_to_office}"

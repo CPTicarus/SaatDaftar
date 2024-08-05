@@ -1,48 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Office User Dashboard</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Office User Page</title>
 </head>
 <body>
-    <h2>Welcome, {{ user.username }}</h2>
+    <h1>Welcome, {{ user.first_name }} {{ user.last_name }}</h1>
 
-    <button id="register-entry">Register Entry</button>
-    <button id="start-temporary-exit">Start Temporary Exit</button>
-    <button id="register-exit">Register Exit</button>
+    <button id="register-entry-btn">Register Entry</button>
 
-    <p id="status-message"></p>
+    <button id="register-exit-btn">Register Exit</button>
 
-    <script type="text/javascript">
-        function handleAjax(url, successMessage) {
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: {
-                    csrfmiddlewaretoken: '{{ csrf_token }}'
-                },
-                success: function(response) {
-                    $('#status-message').text(response.message).css('color', 'green');
-                },
-                error: function(response) {
-                    $('#status-message').text(response.responseJSON.message).css('color', 'red');
+    <script>
+        document.getElementById("register-entry-btn").onclick = function() {
+            fetch("{% url 'register_entry' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
                 }
+            }).then(response => response.json()).then(data => {
+                alert(data.message);
             });
-        }
+        };
 
-        $(document).ready(function() {
-            $('#register-entry').click(function() {
-                handleAjax("{% url 'register_entry' %}", "Entry time registered.");
+        document.getElementById("register-exit-btn").onclick = function() {
+            fetch("{% url 'register_exit' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                }
+            }).then(response => response.json()).then(data => {
+                alert(data.message);
             });
-
-            $('#start-temporary-exit').click(function() {
-                handleAjax("{% url 'start_temporary_exit' %}", "Temporary exit time started.");
-            });
-
-            $('#register-exit').click(function() {
-                handleAjax("{% url 'register_exit' %}", "Exit time registered.");
-            });
-        });
+        };
     </script>
 </body>
 </html>
