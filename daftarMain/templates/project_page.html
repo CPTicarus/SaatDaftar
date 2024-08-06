@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+        h1 {
+            color: #222;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+        .button {
+            padding: 10px 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 4px;
+            background-color: #333;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #555;
+        }
+        .project-list {
+            margin-top: 30px;
+        }
+        .project-item {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #555;
+            font-size: 16px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Project Page</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_name">Project Name:</label>
+                {{ form.name }}
+            </div>
+            <div class="form-group">
+                <label for="id_description">Description:</label>
+                {{ form.description }}
+            </div>
+            <div class="form-group">
+                <label for="id_start_date">Start Date:</label>
+                {{ form.start_date }}
+            </div>
+            <div class="form-group">
+                <label for="id_end_date">End Date:</label>
+                {{ form.end_date }}
+            </div>
+            <div class="form-group">
+                <label for="id_assigned_users">Assign Office Users:</label>
+                {{ form.assigned_users }}
+            </div>
+            <button type="submit" class="button">Create Project</button>
+        </form>
+
+        <div class="project-list">
+            <h2>Existing Projects</h2>
+            {% for project in projects %}
+            <div class="project-item">
+                <h3>{{ project.name }}</h3>
+                <p>{{ project.description }}</p>
+                <p><strong>Start Date:</strong> {{ project.start_date }}</p>
+                <p><strong>End Date:</strong> {{ project.end_date }}</p>
+                <p><strong>Assigned Users:</strong>
+                    {% for user in project.assigned_users.all %}
+                        {{ user.first_name }} {{ user.last_name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <a href="{% url 'office_manager_page' %}" class="back-link">Back to Manager Page</a>
+    </div>
+</body>
+</html>

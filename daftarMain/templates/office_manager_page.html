@@ -4,39 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Office Manager Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #d0d0d0; /* Milky color background */
+            color: #333;
+        }
+        .container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+        h1 {
+            color: #222;
+            margin-bottom: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            background-color: #333;
+            text-decoration: none;
+            font-size: 16px;
+            text-align: center;
+        }
+        .button:hover {
+            background-color: #555;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #555;
+            font-size: 16px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome, {{ office_manager.first_name }} {{ office_manager.last_name }}</h1>
+    <div class="container">
+        <h1>Welcome, {{ office_manager.first_name }} {{ office_manager.last_name }}</h1>
 
-    <h2>Employee List</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>In Office</th>
-                <th>Leave Requested</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for employee, is_in_office, has_leave_request in employees %}
-            <tr>
-                <td>
-                    <a href="{% url 'employee_detail' employee.id %}">
-                        {{ employee.first_name }} {{ employee.last_name }}
-                    </a>
-                </td>
-                <td>
-                    <input type="checkbox" disabled {% if is_in_office %}checked{% endif %}>
-                </td>
-                <td>
-                    <input type="checkbox" disabled {% if has_leave_request %}checked{% endif %}>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <h2>Employee List</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>In Office</th>
+                    <th>Leave Requested</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for employee, is_in_office, has_leave_request in employees %}
+                <tr>
+                    <td>
+                        <a href="{% url 'employee_detail' employee.id %}">
+                            {{ employee.first_name }} {{ employee.last_name }}
+                        </a>
+                    </td>
+                    <td>
+                        <input type="checkbox" disabled {% if is_in_office %}checked{% endif %}>
+                    </td>
+                    <td>
+                        <input type="checkbox" disabled {% if has_leave_request %}checked{% endif %}>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-    <a href="{% url 'add_office_user' %}">Add Personnel</a>
+        <!-- Button to navigate to the Project page -->
+        <a href="{% url 'project_page' %}" class="button">Go to Projects</a>
+
+        <a href="{% url 'add_office_user' %}" class="button">Add Personnel</a>
+    </div>
 </body>
 </html>
-

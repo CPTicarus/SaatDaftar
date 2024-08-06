@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from .models import Clock, OfficeUser, OfficeManager, Leave, RegularRequest
-from .forms import OfficeUserForm, RegularRequestForm
+from .models import Clock, OfficeUser, OfficeManager, Leave, RegularRequest, Project
+from .forms import OfficeUserForm, RegularRequestForm, ProjectForm
 from django.contrib.auth.models import User 
 
 @login_required
@@ -164,3 +164,22 @@ def submit_request(request):
         form = RegularRequestForm()
 
     return render(request, 'submit_request.html', {'form': form})
+
+@login_required
+def project_page(request):
+    if request.method == 'POST':
+        form = ProjectForm(request.POST)
+        if form.is_valid():
+            project = form.save()
+            form.save_m2m()  # Save many-to-many relationships
+            return redirect('project_page')
+    else:
+        form = ProjectForm()
+
+    projects = Project.objects.all()
+
+    context = {
+        'form': form,
+        'projects': projects,
+    }
+    return render(request, 'project_page.html', context)

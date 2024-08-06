@@ -68,3 +68,13 @@ class RegularRequest(models.Model):
 
     def __str__(self):
         return f"{self.get_request_type_display()} by {self.user.first_name} {self.user.last_name} on {self.submitted_at}"
+
+class Project(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    assigned_users = models.ManyToManyField('OfficeUser', related_name='projects')
+
+    def __str__(self):
+        return self.name
