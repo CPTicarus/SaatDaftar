@@ -47,9 +47,24 @@ class Leave(models.Model):
     # daily leave fields
     start_date = models.DateField(null=True, blank=True)  
     end_date = models.DateField(null=True, blank=True)   
-    
+
     reason = models.TextField(null=True, blank=True)
     approved = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.office_user} - {self.leave_type} leave from {self.start_date or self.start_time} to {self.end_date or self.end_time}"
+    
+class RegularRequest(models.Model):
+    REQUEST_TYPES = [
+        ('complaint', 'Complaint'),
+        ('suggestion', 'Suggestion'),
+        ('other', 'Other'),
+    ]
+
+    user = models.ForeignKey(OfficeUser, on_delete=models.CASCADE)
+    request_type = models.CharField(max_length=20, choices=REQUEST_TYPES)
+    message = models.TextField()
+    submitted_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.get_request_type_display()} by {self.user.first_name} {self.user.last_name} on {self.submitted_at}"

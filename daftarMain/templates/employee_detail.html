@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Details</title>
+</head>
+<body>
+    <h1>Employee Details</h1>
+
+    <h2>{{ employee.first_name }} {{ employee.last_name }}</h2>
+
+    <p><strong>Staff Number:</strong> {{ employee.staff_number }}</p>
+    <p><strong>Address:</strong> {{ employee.address }}</p>
+    <p><strong>Phone Number:</strong> {{ employee.phone }}</p>
+    <p><strong>Code Meli:</strong> {{ employee.code_meli }}</p>
+    <p><strong>Birth Date:</strong> {{ employee.birth_date }}</p>
+
+    {% if employee.staff_pic %}
+        <p><strong>Picture:</strong></p>
+        <img src="{{ employee.staff_pic.url }}" alt="{{ employee.first_name }}'s Picture" width="200">
+    {% else %}
+        <p><strong>Picture:</strong> No picture available.</p>
+    {% endif %}
+
+    <h3>Last Clock Entry</h3>
+    {% if last_clock_entry %}
+        <p><strong>Entry to Office:</strong> {{ last_clock_entry.entry_to_office }}</p>
+        <p><strong>Exit from Office:</strong> {{ last_clock_entry.exit_from_office }}</p>
+    {% else %}
+        <p>No clock entries found.</p>
+    {% endif %}
+
+    <h3>Leave Requests</h3>
+    {% if leave_requests %}
+        <ul>
+            {% for leave in leave_requests %}
+            <li>
+                {{ leave.leave_type }} leave from 
+                {% if leave.leave_type == 'daily' %}
+                    {{ leave.start_date }} 
+                    to {{ leave.end_date }}
+                {% elif leave.leave_type == 'hourly' %}
+                    {{ leave.start_time }} 
+                    to {{ leave.end_time }}
+                {% endif %} - 
+                Approved: {{ leave.approved }}
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No leave requests found.</p>
+    {% endif %}
+
+    <a href="{% url 'office_manager_page' %}">Back to Manager Page</a>
+</body>
+</html>

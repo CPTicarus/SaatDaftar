@@ -11,8 +11,11 @@
     <button id="register-entry-btn">Register Entry</button>
     <button id="register-exit-btn">Register Exit</button>
     
-    <!-- New button for hourly leave -->
+    <!-- New button for leave request -->
     <button id="leave-btn" onclick="window.location.href='{% url 'leave_page' %}'">Request Leave</button>
+
+    <!-- New button for submitting a regular request -->
+    <button id="submit-request-btn">Submit Request</button>
 
     <script>
         document.getElementById("register-entry-btn").onclick = function() {
@@ -38,6 +41,11 @@
                 alert(data.message);
             });
         };
+
+        document.getElementById("submit-request-btn").onclick = function() {
+            window.location.href = "{% url 'submit_request' %}";
+        };
     </script>
 </body>
 </html>
+
