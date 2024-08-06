@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from .models import Clock, OfficeUser, OfficeManager
+from .models import Clock, OfficeUser, OfficeManager, Leave
 from .forms import OfficeUserForm
 from django.contrib.auth.models import User 
 
@@ -99,3 +99,39 @@ def add_office_user(request):
         form = OfficeUserForm()
 
     return render(request, 'add_office_user.html', {'form': form})
+
+@login_required
+def leave_page(request):
+    if request.method == "POST":
+        office_user = get_object_or_404(OfficeUser, user=request.user)
+        
+        # Handling Hourly Leave Request
+        hourly_start_time = request.POST.get('hourly_start_time')
+        hourly_end_time = request.POST.get('hourly_end_time')
+        
+        if hourly_start_time and hourly_end_time:
+            Leave.objects.create(
+                office_user=office_user,
+                leave_type='hourly',
+                start_time=hourly_start_time,
+                end_time=hourly_end_time,
+                leave_date=timezone.now().date()  # Assume leave is taken on the current date
+            )
+
+        # Handling Daily Leave Request
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        leave_reason = request.POST.get('leave_reason')
+
+        if start_date and end_date:
+            Leave.objects.create(
+                office_user=office_user,
+                leave_type='daily',
+                start_date=start_date,
+                end_date=end_date,
+                reason=leave_reason
+            )
+
+        return redirect('office_user_page')
+    
+    return render(request, 'leave_page.html')

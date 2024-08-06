@@ -13,4 +13,5 @@ urlpatterns = [
     path('register_entry/', views.register_entry, name='register_entry'),
     path('register_exit/', views.register_exit, name='register_exit'),
     path('office_user/', views.office_user_page, name='office_user_page'),
+    path('leave/', views.leave_page, name='leave_page'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

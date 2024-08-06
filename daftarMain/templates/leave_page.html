@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Leave</title>
+</head>
+<body>
+    <h1>Request Leave</h1>
+
+    <!-- Form for requesting leave -->
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Hourly leave section -->
+        <h2>Hourly Leave</h2>
+        <label for="hourly_start_time">Start Time:</label>
+        <input type="datetime-local" id="hourly_start_time" name="hourly_start_time"><br>
+
+        <label for="hourly_end_time">End Time:</label>
+        <input type="datetime-local" id="hourly_end_time" name="hourly_end_time"><br>
+
+        <hr>
+
+        <!-- Daily leave section -->
+        <h2>Daily Leave</h2>
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date"><br>
+
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date"><br>
+
+        <label for="leave_reason">Reason:</label>
+        <textarea id="leave_reason" name="leave_reason"></textarea><br>
+
+        <button type="submit">Submit Leave Request</button>
+    </form>
+
+    <a href="{% url 'office_user_page' %}">Back to Office User Page</a>
+</body>
+</html>

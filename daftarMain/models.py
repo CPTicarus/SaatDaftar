@@ -33,9 +33,23 @@ class OfficeUser(models.Model):
 class Clock(models.Model):
     entry_to_office = models.DateTimeField(null=True, blank=True)
     exit_from_office = models.DateTimeField(null=True, blank=True)
-    wait_time_start = models.DateTimeField(null=True, blank=True)
-    wait_time_finish = models.DateTimeField(null=True, blank=True)
     office_user = models.ForeignKey(OfficeUser, on_delete=models.CASCADE, null=True, blank=True) # remove null, blank = true
 
     def __str__(self):
         return f"{self.office_user} - {self.entry_to_office}"
+
+class Leave(models.Model):
+    office_user = models.ForeignKey(OfficeUser, on_delete=models.CASCADE)
+    leave_type = models.CharField(max_length=10, choices=[('hourly', 'Hourly'), ('daily', 'Daily')])
+    # hourly leave    
+    start_time = models.DateTimeField(null=True, blank=True)
+    end_time = models.DateTimeField(null=True, blank=True)
+    # daily leave fields
+    start_date = models.DateField(null=True, blank=True)  
+    end_date = models.DateField(null=True, blank=True)   
+    
+    reason = models.TextField(null=True, blank=True)
+    approved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.office_user} - {self.leave_type} leave from {self.start_date or self.start_time} to {self.end_date or self.end_time}"
