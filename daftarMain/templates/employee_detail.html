@@ -4,54 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #d0d0d0; /* Balanced milky color background */
+            color: #333; /* Dark gray text color */
+        }
+        h1 {
+            color: #222; /* Very dark gray, close to black */
+            margin-bottom: 20px;
+        }
+        .container {
+            background: #fff; /* White background for the container */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+        .container img {
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .details p {
+            margin: 10px 0;
+        }
+        .details strong {
+            color: #555; /* Medium gray for strong text */
+        }
+        .leave-requests ul {
+            list-style: none;
+            padding: 0;
+        }
+        .leave-requests li {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f9f9f9; /* Light gray background for leave requests */
+            border-radius: 4px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #555; /* Medium gray text */
+            font-size: 16px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+            color: #333; /* Dark gray text on hover */
+        }
+    </style>
 </head>
 <body>
-    <h1>Employee Details</h1>
+    <div class="container">
+        <h1>Employee Details</h1>
 
-    <h2>{{ employee.first_name }} {{ employee.last_name }}</h2>
+        <h2>{{ employee.first_name }} {{ employee.last_name }}</h2>
 
-    <p><strong>Staff Number:</strong> {{ employee.staff_number }}</p>
-    <p><strong>Address:</strong> {{ employee.address }}</p>
-    <p><strong>Phone Number:</strong> {{ employee.phone }}</p>
-    <p><strong>Code Meli:</strong> {{ employee.code_meli }}</p>
-    <p><strong>Birth Date:</strong> {{ employee.birth_date }}</p>
+        <div class="details">
+            <p><strong>Staff Number:</strong> {{ employee.staff_number }}</p>
+            <p><strong>Address:</strong> {{ employee.address }}</p>
+            <p><strong>Phone Number:</strong> {{ employee.phone }}</p>
+            <p><strong>Code Meli:</strong> {{ employee.code_meli }}</p>
+            <p><strong>Birth Date:</strong> {{ employee.birth_date }}</p>
 
-    {% if employee.staff_pic %}
-        <p><strong>Picture:</strong></p>
-        <img src="{{ employee.staff_pic.url }}" alt="{{ employee.first_name }}'s Picture" width="200">
-    {% else %}
-        <p><strong>Picture:</strong> No picture available.</p>
-    {% endif %}
+            {% if employee.staff_pic %}
+                <p><strong>Picture:</strong></p>
+                <img src="{{ employee.staff_pic.url }}" alt="{{ employee.first_name }}'s Picture" width="200">
+            {% else %}
+                <p><strong>Picture:</strong> No picture available.</p>
+            {% endif %}
+        </div>
 
-    <h3>Last Clock Entry</h3>
-    {% if last_clock_entry %}
-        <p><strong>Entry to Office:</strong> {{ last_clock_entry.entry_to_office }}</p>
-        <p><strong>Exit from Office:</strong> {{ last_clock_entry.exit_from_office }}</p>
-    {% else %}
-        <p>No clock entries found.</p>
-    {% endif %}
+        <h3>Last Clock Entry</h3>
+        {% if last_clock_entry %}
+            <p><strong>Entry to Office:</strong> {{ last_clock_entry.entry_to_office }}</p>
+            <p><strong>Exit from Office:</strong> {{ last_clock_entry.exit_from_office }}</p>
+        {% else %}
+            <p>No clock entries found.</p>
+        {% endif %}
 
-    <h3>Leave Requests</h3>
-    {% if leave_requests %}
-        <ul>
-            {% for leave in leave_requests %}
-            <li>
-                {{ leave.leave_type }} leave from 
-                {% if leave.leave_type == 'daily' %}
-                    {{ leave.start_date }} 
-                    to {{ leave.end_date }}
-                {% elif leave.leave_type == 'hourly' %}
-                    {{ leave.start_time }} 
-                    to {{ leave.end_time }}
-                {% endif %} - 
-                Approved: {{ leave.approved }}
-            </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No leave requests found.</p>
-    {% endif %}
+        <h3>Leave Requests</h3>
+        <div class="leave-requests">
+            {% if leave_requests %}
+                <ul>
+                    {% for leave in leave_requests %}
+                    <li>
+                        {{ leave.leave_type }} leave from 
+                        {% if leave.leave_type == 'daily' %}
+                            {{ leave.start_date }} 
+                            to {{ leave.end_date }}
+                        {% elif leave.leave_type == 'hourly' %}
+                            {{ leave.start_time }} 
+                            to {{ leave.end_time }}
+                        {% endif %} - 
+                        Approved: {{ leave.approved }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No leave requests found.</p>
+            {% endif %}
+        </div>
 
-    <a href="{% url 'office_manager_page' %}">Back to Manager Page</a>
+        <a href="{% url 'office_manager_page' %}" class="back-link">Back to Manager Page</a>
+    </div>
 </body>
 </html>

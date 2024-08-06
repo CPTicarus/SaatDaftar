@@ -4,17 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Office User</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #e0e0e0; /* Dimmed milky color background */
+            color: #333; /* Dark gray text color */
+        }
+        h1 {
+            color: #222; /* Very dark gray, close to black */
+            margin-bottom: 20px;
+        }
+        .form-container {
+            background: #fff; /* White background for the form */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        form p {
+            margin: 10px 0;
+        }
+        form label {
+            font-weight: bold;
+            color: #555; /* Medium gray for labels */
+        }
+        form input[type="text"],
+        form input[type="password"],
+        form input[type="date"],
+        form input[type="file"],
+        form textarea {
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd; /* Light gray border */
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        form button {
+            background-color: #444; /* Dark gray background */
+            color: #fff; /* White text */
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        form button:hover {
+            background-color: #333; /* Slightly darker gray on hover */
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #555; /* Medium gray text */
+            font-size: 16px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+            color: #333; /* Dark gray text on hover */
+        }
+    </style>
 </head>
 <body>
     <h1>Add New Employee</h1>
     
     <!-- Form to add new office user -->
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}  <!-- Render form fields as paragraphs -->
-        <button type="submit">Create Employee</button>
-    </form>
+    <div class="form-container">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}  <!-- Render form fields as paragraphs -->
+            <button type="submit">Create Employee</button>
+        </form>
+    </div>
 
-    <a href="{% url 'office_manager_page' %}">Back to Manager Page</a>
+    <a href="{% url 'office_manager_page' %}" class="back-link">Back to Manager Page</a>
 </body>
 </html>

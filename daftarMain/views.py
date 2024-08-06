@@ -19,7 +19,9 @@ def dashboard(request):
 
 @login_required
 def office_user_page(request):
-    return render(request, 'office_user_page.html')
+    # Get the OfficeUser object related to the current user
+    office_user = get_object_or_404(OfficeUser, user=request.user)
+    return render(request, 'office_user_page.html', {'office_user': office_user})
 
 @login_required
 def register_entry(request):
