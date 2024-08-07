@@ -19,4 +19,6 @@ urlpatterns = [
     path('office_user/', views.office_user_page, name='office_user_page'),
     path('leave/', views.leave_page, name='leave_page'),
     path('submit_request/', views.submit_request, name='submit_request'),
+    path('get_clock_status/', views.get_clock_status, name='get_clock_status'),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

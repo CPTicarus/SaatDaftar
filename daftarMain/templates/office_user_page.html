@@ -5,66 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Office User Page</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #d0d0d0; /* Balanced milky color background */
-            color: #333; /* Dark gray text color */
-        }
-        .container {
-            background: #fff; /* White background for the container */
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            max-width: 600px;
-            margin: auto;
-        }
-        h1 {
-            color: #222; /* Very dark gray, close to black */
-            margin-bottom: 20px;
-        }
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            margin: 10px 5px;
-            border: none;
-            border-radius: 4px;
-            color: #fff;
-            background-color: #333; /* Dark gray button background */
-            text-decoration: none;
-            font-size: 16px;
-            text-align: center;
-        }
-        .button:hover {
-            background-color: #555; /* Slightly lighter gray on hover */
-        }
-        .back-link {
-            display: inline-block;
-            margin-top: 20px;
-            text-decoration: none;
-            color: #555; /* Medium gray text */
-            font-size: 16px;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-            color: #333; /* Dark gray text on hover */
-        }
+        /* Previous CSS styling */
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Welcome, {{ office_user.first_name }} {{ office_user.last_name }}</h1>
 
-        <a href="{% url 'register_entry' %}" class="button">Register Entry</a>
-        <a href="{% url 'register_exit' %}" class="button">Register Exit</a>
-        
-        <!-- New button for leave request -->
-        <a href="{% url 'leave_page' %}" class="button">Request Leave</a>
-
-        <!-- New button for submitting a request -->
-        <a href="{% url 'submit_request' %}" class="button">Submit Request</a>
-
-        <a href="{% url 'dashboard' %}" class="back-link">Back to Dashboard</a>
+        <button id="register-entry-btn">Register Entry</button>
+        <button id="register-exit-btn">Register Exit</button>
+        <button id="leave-btn" onclick="window.location.href='{% url 'leave_page' %}'">Request Leave</button>
+        <button id="submit-request-btn" onclick="window.location.href='{% url 'submit_request' %}'">Submit Request</button>
     </div>
+
+    <script>
+        function updateButtons() {
+            fetch("{% url 'get_clock_status' %}", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(response => response.json()).then(data => {
+                document.getElementById("register-entry-btn").disabled = !data.can_register_entry;
+                document.getElementById("register-exit-btn").disabled = !data.can_register_exit;
+            });
+        }
+        
+        // Call this function when the page loads to set the initial button states
+        window.onload = updateButtons;
+
+        document.getElementById("register-entry-btn").onclick = function() {
+            fetch("{% url 'register_entry' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                }
+            }).then(response => response.json()).then(data => {
+                alert(data.message);
+                updateButtons(); // Update the button states after registering entry
+            });
+        };
+
+        document.getElementById("register-exit-btn").onclick = function() {
+            fetch("{% url 'register_exit' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                }
+            }).then(response => response.json()).then(data => {
+                alert(data.message);
+                updateButtons(); // Update the button states after registering exit
+            });
+        };
+
+        // Initial check to set button states correctly
+        updateButtons();
+    </script>
 </body>
 </html>

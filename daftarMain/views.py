@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Clock, OfficeUser, OfficeManager, Leave, RegularRequest, Project
 from .forms import OfficeUserForm, RegularRequestForm, ProjectForm
 from django.contrib.auth.models import User 
+from django.db import IntegrityError 
+from django.contrib import messages
 
 @login_required
 def dashboard(request):
@@ -27,6 +29,10 @@ def office_user_page(request):
 def register_entry(request):
     if request.method == "POST":
         office_user = get_object_or_404(OfficeUser, user=request.user)
+        # Check if there's an active entry (entry without an exit)
+        active_clock = Clock.objects.filter(office_user=office_user, exit_from_office__isnull=True).exists()
+        if active_clock:
+            return JsonResponse({"status": "error", "message": "You have already registered an entry. Please register an exit before registering a new entry."}, status=400)
         Clock.objects.create(office_user=office_user, entry_to_office=timezone.now())
         return JsonResponse({"status": "success", "message": "Entry time registered."})
     return JsonResponse({"status": "error", "message": "Invalid request."}, status=400)
@@ -35,11 +41,31 @@ def register_entry(request):
 def register_exit(request):
     if request.method == "POST":
         office_user = get_object_or_404(OfficeUser, user=request.user)
-        clock_entry = Clock.objects.filter(office_user=office_user).latest('entry_to_office')
-        clock_entry.exit_from_office = timezone.now()
-        clock_entry.save()
+        # Find the last clock entry that has no exit
+        active_clock = Clock.objects.filter(office_user=office_user, exit_from_office__isnull=True).order_by('-entry_to_office').first()
+        if not active_clock:
+            return JsonResponse({"status": "error", "message": "No active entry found. Please register an entry before registering an exit."}, status=400)
+        active_clock.exit_from_office = timezone.now()
+        active_clock.save()
         return JsonResponse({"status": "success", "message": "Exit time registered."})
     return JsonResponse({"status": "error", "message": "Invalid request."}, status=400)
+
+@login_required
+def get_clock_status(request):
+    office_user = get_object_or_404(OfficeUser, user=request.user)
+    
+    # Count the number of entries and exits
+    entry_count = Clock.objects.filter(office_user=office_user).count()
+    exit_count = Clock.objects.filter(office_user=office_user, exit_from_office__isnull=False).count()
+    
+    # Determine whether the user can register an entry or an exit
+    can_register_entry = entry_count == exit_count
+    can_register_exit = entry_count > exit_count
+    
+    return JsonResponse({
+        'can_register_entry': can_register_entry,
+        'can_register_exit': can_register_exit
+    })
 
 @login_required
 def office_manager_page(request):
@@ -80,18 +106,26 @@ def add_office_user(request):
     office_manager = get_object_or_404(OfficeManager, user=request.user)
 
     if request.method == "POST":
-        form = OfficeUserForm(request.POST)
+        form = OfficeUserForm(request.POST, request.FILES)
         if form.is_valid():
-            office_user = form.save(commit=False)
-            office_user.office_admin = office_manager
-            office_user.save()
-            # automatically create the user with phone as username and code_meli as password
-            office_user.user = User.objects.create_user(
-                username=office_user.phone,
-                password=office_user.code_meli
-            )
-            office_user.save()
-            return redirect('office_manager_page')
+            try:
+                # Check if a user with the same username already exists
+                if User.objects.filter(username=form.cleaned_data['phone']).exists():
+                    messages.error(request, 'An error occurred. The phone number is already associated with an existing user.')
+                else:
+                    office_user = form.save(commit=False)
+                    office_user.office_admin = office_manager
+                    office_user.user = User.objects.create_user(
+                        username=office_user.phone,
+                        password=office_user.code_meli
+                    )
+                    office_user.save()
+                    messages.success(request, f'Office user {office_user.first_name} {office_user.last_name} was created successfully.')
+                    return redirect('office_manager_page')
+            except IntegrityError:
+                messages.error(request, 'An unexpected error occurred. Please try again.')
+        else:
+            messages.error(request, 'There was an error in the form. Please correct the errors below.')
     else:
         form = OfficeUserForm()
 
