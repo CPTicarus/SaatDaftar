@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.http import JsonResponse, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
-from .models import Clock, OfficeUser, OfficeManager, Leave, RegularRequest, Project
+from .models import Clock, OfficeUser, OfficeManager, Leave, Project
 from .forms import OfficeUserForm, RegularRequestForm, ProjectForm
 from django.contrib.auth.models import User 
 from django.db import IntegrityError 
@@ -227,8 +227,9 @@ def project_page(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST)
         if form.is_valid():
-            project = form.save()
-            form.save_m2m()  # Save many-to-many relationships
+            project = form.save(commit=False)  # Save the form data without committing to the DB
+            project.save()  # Now commit to the DB
+            form.save_m2m()  # Save many-to-many relationships, required for assigned_users
             return redirect('project_page')
     else:
         form = ProjectForm()
