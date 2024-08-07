@@ -13,12 +13,16 @@ urlpatterns = [
     path('office_manager/add-user/', views.add_office_user, name='add_office_user'),
     path('employee/<int:employee_id>/', views.employee_detail, name='employee_detail'),
     path('projects/', views.project_page, name='project_page'),
+    path('leave/approve/<int:leave_id>/', views.approve_leave, name='approve_leave'),
+    path('leave/deny/<int:leave_id>/', views.deny_leave, name='deny_leave'),
     #office users urls
     path('register_entry/', views.register_entry, name='register_entry'),
     path('register_exit/', views.register_exit, name='register_exit'),
+    path('get_clock_status/', views.get_clock_status, name='get_clock_status'),
+
     path('office_user/', views.office_user_page, name='office_user_page'),
     path('leave/', views.leave_page, name='leave_page'),
     path('submit_request/', views.submit_request, name='submit_request'),
-    path('get_clock_status/', views.get_clock_status, name='get_clock_status'),
+    
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

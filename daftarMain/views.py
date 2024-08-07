@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from .models import Clock, OfficeUser, OfficeManager, Leave, RegularRequest, Project
 from .forms import OfficeUserForm, RegularRequestForm, ProjectForm
@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError 
 from django.contrib import messages
 
+#To redirect logins 
 @login_required
 def dashboard(request):
     user = request.user  # Get the logged-in user
@@ -54,11 +55,9 @@ def register_exit(request):
 def get_clock_status(request):
     office_user = get_object_or_404(OfficeUser, user=request.user)
     
-    # Count the number of entries and exits
     entry_count = Clock.objects.filter(office_user=office_user).count()
     exit_count = Clock.objects.filter(office_user=office_user, exit_from_office__isnull=False).count()
     
-    # Determine whether the user can register an entry or an exit
     can_register_entry = entry_count == exit_count
     can_register_exit = entry_count > exit_count
     
@@ -166,6 +165,30 @@ def leave_page(request):
         return redirect('office_user_page')
     
     return render(request, 'leave_page.html')
+
+@login_required
+def approve_leave(request, leave_id):
+    leave = get_object_or_404(Leave, id=leave_id)
+    
+    # Only allow office managers to approve leave
+    if request.user.is_officemanager:
+        leave.approved = True
+        leave.save()
+        return redirect('employee_detail', employee_id=leave.office_user.id)
+    else:
+        return HttpResponseForbidden("You do not have permission to perform this action.")
+
+@login_required
+def deny_leave(request, leave_id):
+    leave = get_object_or_404(Leave, id=leave_id)
+    
+    # Only allow office managers to deny leave
+    if request.user.is_officemanager:
+        leave.approved = False
+        leave.save()
+        return redirect('employee_detail', employee_id=leave.office_user.id)
+    else:
+        return HttpResponseForbidden("You do not have permission to perform this action.")
 
 @login_required
 def employee_detail(request, employee_id):
