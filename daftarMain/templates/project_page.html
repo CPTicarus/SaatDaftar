@@ -76,11 +76,76 @@
             text-decoration: underline;
             color: #333;
         }
+
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .action-buttons {
+            margin-top: 10px;
+        }
+
+        .action-buttons button {
+            padding: 8px 12px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .edit-button {
+            background-color: #007bff;
+        }
+
+        .edit-button:hover {
+            background-color: #0056b3;
+        }
+
+        .end-button {
+            background-color: #ffc107;
+        }
+
+        .end-button:hover {
+            background-color: #e0a800;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+        }
+
+        .delete-button:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Project Page</h1>
+
+        <!-- Display messages -->
+        <div class="messages">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
 
         <form method="POST">
             {% csrf_token %}
@@ -110,11 +175,27 @@
                 <h3>{{ project.name }}</h3>
                 <p>{{ project.description }}</p>
                 <p><strong>Start Date:</strong> {{ project.start_date }}</p>
+                <p><strong>End Date:</strong> 
+                    {% if project.end_date %}
+                        {{ project.end_date }}
+                    {% else %}
+                        Not Ended
+                    {% endif %}
+                </p>
                 <p><strong>Assigned Users:</strong>
                     {% for user in project.assigned_users.all %}
                         {{ user.first_name }} {{ user.last_name }}{% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </p>
+
+                <!-- Action buttons -->
+                <div class="action-buttons">
+                    <button class="edit-button" onclick="window.location.href='{% url 'edit_project' project.id %}'">Edit</button>
+                    {% if not project.end_date %}
+                        <button class="end-button" onclick="window.location.href='{% url 'end_project' project.id %}'">End</button>
+                    {% endif %}
+                    <button class="delete-button" onclick="window.location.href='{% url 'delete_project' project.id %}'">Delete</button>
+                </div>
             </div>
             {% endfor %}
         </div>

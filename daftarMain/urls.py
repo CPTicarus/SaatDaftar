@@ -12,9 +12,14 @@ urlpatterns = [
     path('office_manager/', views.office_manager_page, name='office_manager_page'),
     path('office_manager/add-user/', views.add_office_user, name='add_office_user'),
     path('employee/<int:employee_id>/', views.employee_detail, name='employee_detail'),
-    path('projects/', views.project_page, name='project_page'),
     path('leave/approve/<int:leave_id>/', views.approve_leave, name='approve_leave'),
     path('leave/deny/<int:leave_id>/', views.deny_leave, name='deny_leave'),
+
+    path('projects/end/<int:project_id>/', views.end_project, name='end_project'),
+    path('projects/', views.project_page, name='project_page'),
+    path('projects/<int:project_id>/edit/', views.edit_project, name='edit_project'),
+    path('projects/<int:project_id>/delete/', views.delete_project, name='delete_project'),
+
     #office users urls
     path('register_entry/', views.register_entry, name='register_entry'),
     path('register_exit/', views.register_exit, name='register_exit'),

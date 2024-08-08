@@ -230,6 +230,8 @@ def project_page(request):
             project = form.save(commit=False)  # Save the form data without committing to the DB
             project.save()  # Now commit to the DB
             form.save_m2m()  # Save many-to-many relationships, required for assigned_users
+            
+            messages.success(request, 'Project created successfully!')  # Add success message
             return redirect('project_page')
     else:
         form = ProjectForm()
@@ -241,3 +243,40 @@ def project_page(request):
         'projects': projects,
     }
     return render(request, 'project_page.html', context)
+
+@login_required
+def delete_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    project.delete()
+    messages.success(request, 'Project deleted successfully!')
+    return redirect('project_page')
+
+@login_required
+def end_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+
+    if project.end_date is None:  # Ensure that the project does not already have an end date
+        project.end_date = timezone.now().date()
+        project.save()
+        messages.success(request, f'Project "{project.name}" has been successfully ended.')
+
+    return redirect('project_page')
+
+@login_required
+def edit_project(request, project_id):  
+    project = get_object_or_404(Project, id=project_id)
+    
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Project updated successfully!')
+            return redirect('project_page')
+    else:
+        form = ProjectForm(instance=project)
+
+    context = {
+        'form': form,
+        'project': project
+    }
+    return render(request, 'edit_project.html', context)
