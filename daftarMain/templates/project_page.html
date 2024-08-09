@@ -38,10 +38,6 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
-        .form-group input[type="checkbox"] {
-            width: auto;
-            margin-right: 10px;
-        }
         .button {
             padding: 10px 20px;
             margin: 10px 0;
@@ -65,38 +61,9 @@
             border-radius: 4px;
             margin-bottom: 10px;
         }
-        .back-link {
-            display: inline-block;
-            margin-top: 20px;
-            text-decoration: none;
-            color: #555;
-            font-size: 16px;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-            color: #333;
-        }
-
-        .messages {
-            margin-bottom: 20px;
-        }
-
-        .alert {
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
         .action-buttons {
             margin-top: 10px;
         }
-
         .action-buttons button {
             padding: 8px 12px;
             margin-right: 10px;
@@ -106,31 +73,33 @@
             font-size: 14px;
             cursor: pointer;
         }
-
         .edit-button {
             background-color: #007bff;
         }
-
         .edit-button:hover {
             background-color: #0056b3;
         }
-
         .end-button {
             background-color: #ffc107;
         }
-
         .end-button:hover {
             background-color: #e0a800;
         }
-
         .delete-button {
             background-color: #dc3545;
         }
-
         .delete-button:hover {
             background-color: #c82333;
         }
     </style>
+    <script>
+        function confirmDelete(event, projectName) {
+            event.preventDefault();
+            if (confirm(`Are you sure you want to delete the project "${projectName}"?`)) {
+                document.getElementById(event.target.dataset.formId).submit();
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -175,13 +144,12 @@
                 <h3>{{ project.name }}</h3>
                 <p>{{ project.description }}</p>
                 <p><strong>Start Date:</strong> {{ project.start_date }}</p>
-                <p><strong>End Date:</strong> 
-                    {% if project.end_date %}
-                        {{ project.end_date }}
-                    {% else %}
-                        Not Ended
-                    {% endif %}
-                </p>
+
+                <!-- Display End Date if the project has been ended -->
+                {% if project.end_date %}
+                <p><strong>End Date:</strong> {{ project.end_date }}</p>
+                {% endif %}
+                
                 <p><strong>Assigned Users:</strong>
                     {% for user in project.assigned_users.all %}
                         {{ user.first_name }} {{ user.last_name }}{% if not forloop.last %}, {% endif %}
@@ -191,10 +159,17 @@
                 <!-- Action buttons -->
                 <div class="action-buttons">
                     <button class="edit-button" onclick="window.location.href='{% url 'edit_project' project.id %}'">Edit</button>
+                    
+                    <!-- End Project Button -->
                     {% if not project.end_date %}
-                        <button class="end-button" onclick="window.location.href='{% url 'end_project' project.id %}'">End</button>
+                    <button class="end-button" onclick="window.location.href='{% url 'end_project' project.id %}'">End</button>
                     {% endif %}
-                    <button class="delete-button" onclick="window.location.href='{% url 'delete_project' project.id %}'">Delete</button>
+                    
+                    <!-- Delete Project Button with Confirmation -->
+                    <form method="POST" action="{% url 'delete_project' project.id %}" id="delete-form-{{ project.id }}" style="display:inline;">
+                        {% csrf_token %}
+                        <button class="delete-button" data-form-id="delete-form-{{ project.id }}" onclick="confirmDelete(event, '{{ project.name }}')">Delete</button>
+                    </form>
                 </div>
             </div>
             {% endfor %}

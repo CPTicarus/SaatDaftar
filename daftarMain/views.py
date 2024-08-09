@@ -247,9 +247,15 @@ def project_page(request):
 @login_required
 def delete_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
-    project.delete()
-    messages.success(request, 'Project deleted successfully!')
-    return redirect('project_page')
+
+    if request.method == "POST":
+        project.delete()
+        messages.success(request, f'Project "{project.name}" has been successfully deleted.')
+        return redirect('project_page')
+
+    context = {
+        'project': project,
+    }
 
 @login_required
 def end_project(request, project_id):
@@ -263,20 +269,20 @@ def end_project(request, project_id):
     return redirect('project_page')
 
 @login_required
-def edit_project(request, project_id):  
+def edit_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     
-    if request.method == 'POST':
+    if request.method == "POST":
         form = ProjectForm(request.POST, instance=project)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Project updated successfully!')
+            messages.success(request, f'Project "{project.name}" has been successfully updated.')
             return redirect('project_page')
     else:
         form = ProjectForm(instance=project)
-
+    
     context = {
         'form': form,
-        'project': project
+        'project': project,
     }
     return render(request, 'edit_project.html', context)
