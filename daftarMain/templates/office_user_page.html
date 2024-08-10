@@ -5,17 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Office User Page</title>
     <style>
-        /* Previous CSS styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+            text-align: center;
+        }
+        h1 {
+            color: #222;
+            margin-bottom: 20px;
+        }
+        .button {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 4px;
+            background-color: #333;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 200px;
+            display: inline-block;
+        }
+        .button:hover {
+            background-color: #555;
+        }
+        .button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Welcome, {{ office_user.first_name }} {{ office_user.last_name }}</h1>
 
-        <button id="register-entry-btn">Register Entry</button>
-        <button id="register-exit-btn">Register Exit</button>
-        <button id="leave-btn" onclick="window.location.href='{% url 'leave_page' %}'">Request Leave</button>
-        <button id="submit-request-btn" onclick="window.location.href='{% url 'submit_request' %}'">Submit Request</button>
+        <button id="register-entry-btn" class="button">Register Entry</button>
+        <button id="register-exit-btn" class="button">Register Exit</button>
+        <button id="leave-btn" class="button" onclick="window.location.href='{% url 'leave_page' %}'">Request Leave</button>
+        <button id="submit-request-btn" class="button" onclick="window.location.href='{% url 'submit_request' %}'">Submit Request</button>
     </div>
 
     <script>
@@ -30,7 +68,7 @@
                 document.getElementById("register-exit-btn").disabled = !data.can_register_exit;
             });
         }
-        
+
         // Call this function when the page loads to set the initial button states
         window.onload = updateButtons;
 

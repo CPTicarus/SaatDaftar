@@ -49,7 +49,7 @@ class Leave(models.Model):
     end_date = models.DateField(null=True, blank=True)   
 
     reason = models.TextField(null=True, blank=True)
-    approved = models.BooleanField(default=False)
+    approved = models.BooleanField(default=None, null=True, blank=True)
 
     def __str__(self):
         return f"{self.office_user} - {self.leave_type} leave from {self.start_date or self.start_time} to {self.end_date or self.end_time}"

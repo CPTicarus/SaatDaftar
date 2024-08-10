@@ -108,17 +108,22 @@ def add_office_user(request):
         form = OfficeUserForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                # Check if a user with the same username already exists
+                # Check if a user with the same phone number already exists
                 if User.objects.filter(username=form.cleaned_data['phone']).exists():
                     messages.error(request, 'An error occurred. The phone number is already associated with an existing user.')
                 else:
-                    office_user = form.save(commit=False)
-                    office_user.office_admin = office_manager
-                    office_user.user = User.objects.create_user(
-                        username=office_user.phone,
-                        password=office_user.code_meli
+                    # First, create a new User instance with the phone number as the username and code meli as the password
+                    user = User.objects.create_user(
+                        username=form.cleaned_data['phone'],
+                        password=form.cleaned_data['code_meli']
                     )
-                    office_user.save()
+                    
+                    # Now create the OfficeUser instance and link it to the User instance
+                    office_user = form.save(commit=False)  # Create OfficeUser without saving to the database yet
+                    office_user.user = user  # Link the User instance
+                    office_user.office_admin = office_manager  # Set the logged-in office manager as the office admin
+                    office_user.save()  # Save the OfficeUser instance to the database
+
                     messages.success(request, f'Office user {office_user.first_name} {office_user.last_name} was created successfully.')
                     return redirect('office_manager_page')
             except IntegrityError:
@@ -132,9 +137,9 @@ def add_office_user(request):
 
 @login_required
 def leave_page(request):
+    office_user = get_object_or_404(OfficeUser, user=request.user)
+    
     if request.method == "POST":
-        office_user = get_object_or_404(OfficeUser, user=request.user)
-        
         # Handling Hourly Leave Request
         hourly_start_time = request.POST.get('hourly_start_time')
         hourly_end_time = request.POST.get('hourly_end_time')
@@ -145,7 +150,7 @@ def leave_page(request):
                 leave_type='hourly',
                 start_time=hourly_start_time,
                 end_time=hourly_end_time,
-                leave_date=timezone.now().date()  # Assume leave is taken on the current date
+                approved=None  # Set to None to mark as pending by default
             )
 
         # Handling Daily Leave Request
@@ -159,19 +164,25 @@ def leave_page(request):
                 leave_type='daily',
                 start_date=start_date,
                 end_date=end_date,
-                reason=leave_reason
+                reason=leave_reason,
+                approved=None  # Set to None to mark as pending by default
             )
 
         return redirect('office_user_page')
     
-    return render(request, 'leave_page.html')
+    # Fetch the user's leave requests
+    leave_requests = Leave.objects.filter(office_user=office_user).order_by('-start_date', '-start_time')
+
+    return render(request, 'leave_page.html', {
+        'leave_requests': leave_requests
+    })
 
 @login_required
 def approve_leave(request, leave_id):
     leave = get_object_or_404(Leave, id=leave_id)
     
     # Only allow office managers to approve leave
-    if request.user.is_officemanager:
+    if hasattr(request.user, 'officemanager'):  # Ensure the user has an associated OfficeManager
         leave.approved = True
         leave.save()
         return redirect('employee_detail', employee_id=leave.office_user.id)
@@ -183,13 +194,13 @@ def deny_leave(request, leave_id):
     leave = get_object_or_404(Leave, id=leave_id)
     
     # Only allow office managers to deny leave
-    if request.user.is_officemanager:
+    if hasattr(request.user, 'officemanager'):  # Ensure the user has an associated OfficeManager
         leave.approved = False
         leave.save()
         return redirect('employee_detail', employee_id=leave.office_user.id)
     else:
         return HttpResponseForbidden("You do not have permission to perform this action.")
-
+    
 @login_required
 def employee_detail(request, employee_id):
     employee = get_object_or_404(OfficeUser, id=employee_id)

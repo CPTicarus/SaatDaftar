@@ -36,6 +36,54 @@
         <button type="submit">Submit Leave Request</button>
     </form>
 
+    <hr>
+
+    <!-- Display existing leave requests -->
+    <h2>Your Leave Requests</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Start Date/Time</th>
+                <th>End Date/Time</th>
+                <th>Reason</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in leave_requests %}
+            <tr>
+                <td>{{ leave.get_leave_type_display }}</td>
+                <td>
+                    {% if leave.start_date %}
+                        {{ leave.start_date }}
+                    {% else %}
+                        {{ leave.start_time }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if leave.end_date %}
+                        {{ leave.end_date }}
+                    {% else %}
+                        {{ leave.end_time }}
+                    {% endif %}
+                </td>
+                <td>{{ leave.reason }}</td>
+                <td>
+                    {% if leave.approved is True %}
+                        <span style="color: green;">Approved</span>
+                    {% elif leave.approved is False %}
+                        <span style="color: red;">Denied</span>
+                    {% else %}
+                        <span style="color: orange;">Pending</span>
+                    {% endif %}
+                </td>
+                
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
     <a href="{% url 'office_user_page' %}">Back to Office User Page</a>
 </body>
 </html>
