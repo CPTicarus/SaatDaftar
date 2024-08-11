@@ -93,6 +93,9 @@
             {% else %}
                 <p><strong>Picture:</strong> No picture available.</p>
             {% endif %}
+
+            <h3>View Registered Hours</h3>
+            <a href="{% url 'registered_hours' employee.id %}" class="button">View Registered Hours</a>
         </div>
 
         <h3>Last Clock Entry</h3>

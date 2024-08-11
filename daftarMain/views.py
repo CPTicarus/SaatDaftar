@@ -2,16 +2,18 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.http import JsonResponse, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User 
+from django.db import IntegrityError
+from django.db.models import Sum, F
+from django.contrib import messages
+
 from .models import Clock, OfficeUser, OfficeManager, Leave, Project
 from .forms import OfficeUserForm, RegularRequestForm, ProjectForm
-from django.contrib.auth.models import User 
-from django.db import IntegrityError 
-from django.contrib import messages
 
 #To redirect logins 
 @login_required
 def dashboard(request):
-    user = request.user  # Get the logged-in user
+    user = request.user
 
     if OfficeUser.objects.filter(user=user).exists():
         return redirect('office_user_page')
@@ -110,19 +112,17 @@ def add_office_user(request):
             try:
                 # Check if a user with the same phone number already exists
                 if User.objects.filter(username=form.cleaned_data['phone']).exists():
-                    messages.error(request, 'An error occurred. The phone number is already associated with an existing user.')
+                    messages.error(request, 'The phone number is already associated with an existing user.')
                 else:
-                    # First, create a new User instance with the phone number as the username and code meli as the password
+                    # The User instance is automatically created when the OfficeUser is saved
+                    office_user = form.save(commit=False)
                     user = User.objects.create_user(
                         username=form.cleaned_data['phone'],
                         password=form.cleaned_data['code_meli']
                     )
-                    
-                    # Now create the OfficeUser instance and link it to the User instance
-                    office_user = form.save(commit=False)  # Create OfficeUser without saving to the database yet
-                    office_user.user = user  # Link the User instance
-                    office_user.office_admin = office_manager  # Set the logged-in office manager as the office admin
-                    office_user.save()  # Save the OfficeUser instance to the database
+                    office_user.user = user
+                    office_user.office_admin = office_manager
+                    office_user.save()
 
                     messages.success(request, f'Office user {office_user.first_name} {office_user.last_name} was created successfully.')
                     return redirect('office_manager_page')
@@ -297,3 +297,36 @@ def edit_project(request, project_id):
         'project': project,
     }
     return render(request, 'edit_project.html', context)
+
+@login_required
+def calculate_hours(request, employee_id):
+    employee = get_object_or_404(OfficeUser, id=employee_id)
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    clock_entries = []
+    total_hours = 0
+
+    if start_date and end_date:
+        # Filter clock entries by the given date range
+        clock_entries = Clock.objects.filter(
+            office_user=employee,
+            entry_to_office__gte=start_date,
+            exit_from_office__lte=end_date
+        )
+
+        # Calculate the total time worked
+        total_hours = clock_entries.aggregate(
+            total_worked=Sum(F('exit_from_office') - F('entry_to_office'))
+        )['total_worked']
+
+        if total_hours:
+            total_hours = total_hours.total_seconds() / 3600  # Convert to hours
+
+    return render(request, 'registered_hours.html', {
+        'employee': employee,
+        'clock_entries': clock_entries,
+        'total_hours': total_hours,
+        'start_date': start_date,
+        'end_date': end_date,
+    })

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registered Working Hours</title>
+</head>
+<body>
+    <div class="container">
+        <h2>Working Hours for {{ employee.first_name }} {{ employee.last_name }}</h2>
+
+        <form method="get">
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" required value="{{ start_date }}">
+
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" required value="{{ end_date }}">
+
+            <button type="submit">Calculate</button>
+        </form>
+
+        {% if total_hours is not None %}
+            <h3>Total Hours Worked: {{ total_hours }} hours</h3>
+        {% endif %}
+
+        <h3>Registered Hours</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Entry Time</th>
+                    <th>Exit Time</th>
+                    <th>Hours Worked</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in clock_entries %}
+                    <tr>
+                        <td>{{ entry.entry_to_office }}</td>
+                        <td>{{ entry.exit_from_office }}</td>
+                        <td>{{ entry.hours_worked.total_seconds|divisibleby:"3600" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{% url 'employee_detail' employee.id %}" class="back-link">Back to Employee Details</a>
+    </div>
+</body>
+</html>
