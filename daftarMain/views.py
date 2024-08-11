@@ -208,8 +208,8 @@ def employee_detail(request, employee_id):
     # Get the employee's last clock entry
     last_clock_entry = Clock.objects.filter(office_user=employee).order_by('-entry_to_office').first()
 
-    # Get the employee's leave requests
-    leave_requests = Leave.objects.filter(office_user=employee).order_by('-start_date')
+    # Get the employee's pending leave requests
+    leave_requests = Leave.objects.filter(office_user=employee, approved=None).order_by('-start_date')
 
     context = {
         'employee': employee,
@@ -308,20 +308,25 @@ def calculate_hours(request, employee_id):
     total_hours = 0
 
     if start_date and end_date:
-        # Filter clock entries by the given date range
+        # Filter clock entries by the given date range and ensure exit_from_office is not None
         clock_entries = Clock.objects.filter(
             office_user=employee,
             entry_to_office__gte=start_date,
-            exit_from_office__lte=end_date
+            exit_from_office__lte=end_date,
+            exit_from_office__isnull=False
         )
 
         # Calculate the total time worked
-        total_hours = clock_entries.aggregate(
+        total_seconds_worked = clock_entries.aggregate(
             total_worked=Sum(F('exit_from_office') - F('entry_to_office'))
         )['total_worked']
 
-        if total_hours:
-            total_hours = total_hours.total_seconds() / 3600  # Convert to hours
+        if total_seconds_worked:
+            total_hours = total_seconds_worked.total_seconds() / 3600  # Convert to hours
+
+        # Calculate hours worked for each entry and attach it to the entry
+        for entry in clock_entries:
+            entry.hours_worked = (entry.exit_from_office - entry.entry_to_office).total_seconds() / 3600
 
     return render(request, 'registered_hours.html', {
         'employee': employee,

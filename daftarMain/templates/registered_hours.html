@@ -4,6 +4,101 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registered Working Hours</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        input[type="date"] {
+            padding: 5px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            width: 200px;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        h3 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .back-link {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #6c757d;
+            color: #fff;
+            border-radius: 3px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            background-color: #5a6268;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -20,7 +115,7 @@
         </form>
 
         {% if total_hours is not None %}
-            <h3>Total Hours Worked: {{ total_hours }} hours</h3>
+            <h3>Total Hours Worked: {{ total_hours|floatformat:2 }} hours</h3>
         {% endif %}
 
         <h3>Registered Hours</h3>
@@ -37,7 +132,7 @@
                     <tr>
                         <td>{{ entry.entry_to_office }}</td>
                         <td>{{ entry.exit_from_office }}</td>
-                        <td>{{ entry.hours_worked.total_seconds|divisibleby:"3600" }}</td>
+                        <td>{{ entry.hours_worked|floatformat:2 }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
