@@ -44,6 +44,38 @@
             background-color: #ccc;
             cursor: not-allowed;
         }
+        /* Style for the modal (pop-up) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            text-align: left;
+            border-radius: 8px;
+        }
+        .modal-header, .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-footer {
+            padding-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -54,6 +86,30 @@
         <button id="register-exit-btn" class="button">Register Exit</button>
         <button id="leave-btn" class="button" onclick="window.location.href='{% url 'leave_page' %}'">Request Leave</button>
         <button id="submit-request-btn" class="button" onclick="window.location.href='{% url 'submit_request' %}'">Submit Request</button>
+    </div>
+
+    <!-- Modal for selecting projects -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Projects Worked On</h3>
+                <span id="closeModal" style="cursor:pointer;">&times;</span>
+            </div>
+            <form id="projectForm">
+                <div id="projectList">
+                    <!-- Dynamically populated list of projects -->
+                    {% for project in projects %}
+                        <label>
+                            <input type="checkbox" name="projects" value="{{ project.id }}">
+                            {{ project.name }}
+                        </label><br>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="submitProjects" class="button">Submit</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -86,20 +142,31 @@
         };
 
         document.getElementById("register-exit-btn").onclick = function() {
+            // Show the project selection modal
+            document.getElementById("projectModal").style.display = "flex";
+        };
+
+        // Handle modal close
+        document.getElementById("closeModal").onclick = function() {
+            document.getElementById("projectModal").style.display = "none";
+        };
+
+        // Handle project selection and submit
+        document.getElementById("submitProjects").onclick = function() {
+            let formData = new FormData(document.getElementById("projectForm"));
             fetch("{% url 'register_exit' %}", {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": "{{ csrf_token }}",
-                    "Content-Type": "application/json"
-                }
+                },
+                body: formData
             }).then(response => response.json()).then(data => {
                 alert(data.message);
+                document.getElementById("projectModal").style.display = "none";
                 updateButtons(); // Update the button states after registering exit
             });
         };
-
-        // Initial check to set button states correctly
-        updateButtons();
     </script>
 </body>
 </html>
+

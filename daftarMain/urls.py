@@ -27,6 +27,7 @@ urlpatterns = [
     # Office users urls
     path('register_entry/', views.register_entry, name='register_entry'),
     path('register_exit/', views.register_exit, name='register_exit'),
+    path('project-popup/', views.project_popup, name='project_popup'),
     path('get_clock_status/', views.get_clock_status, name='get_clock_status'),
 
     path('office_user/', views.office_user_page, name='office_user_page'),

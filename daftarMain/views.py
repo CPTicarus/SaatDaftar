@@ -8,7 +8,7 @@ from django.db.models import Sum, F
 from django.contrib import messages
 
 from .models import Clock, OfficeUser, OfficeManager, Leave, Project
-from .forms import OfficeUserForm, RegularRequestForm, ProjectForm
+from .forms import OfficeUserForm, RegularRequestForm, ProjectForm, ProjectSelectionForm
 
 #To redirect logins 
 @login_required
@@ -24,9 +24,15 @@ def dashboard(request):
 
 @login_required
 def office_user_page(request):
-    # Get the OfficeUser object related to the current user
+    projects = Project.objects.all()
     office_user = get_object_or_404(OfficeUser, user=request.user)
-    return render(request, 'office_user_page.html', {'office_user': office_user})
+    
+    context = {
+        'office_user': office_user,
+        'projects': projects,
+    }
+    
+    return render(request, 'office_user_page.html', context)
 
 @login_required
 def register_entry(request):
@@ -42,16 +48,26 @@ def register_entry(request):
 
 @login_required
 def register_exit(request):
+    office_user = get_object_or_404(OfficeUser, user=request.user)
+
     if request.method == "POST":
-        office_user = get_object_or_404(OfficeUser, user=request.user)
-        # Find the last clock entry that has no exit
-        active_clock = Clock.objects.filter(office_user=office_user, exit_from_office__isnull=True).order_by('-entry_to_office').first()
-        if not active_clock:
-            return JsonResponse({"status": "error", "message": "No active entry found. Please register an entry before registering an exit."}, status=400)
-        active_clock.exit_from_office = timezone.now()
-        active_clock.save()
-        return JsonResponse({"status": "success", "message": "Exit time registered."})
-    return JsonResponse({"status": "error", "message": "Invalid request."}, status=400)
+        # Register the exit time
+        clock_entry = Clock.objects.filter(office_user=office_user).order_by('-entry_to_office').first()
+        if clock_entry and clock_entry.exit_from_office is None:
+            clock_entry.exit_from_office = timezone.now()
+            clock_entry.save()
+
+            # Handle the selected projects
+            project_ids = request.POST.getlist('projects')
+            for project_id in project_ids:
+                project = get_object_or_404(Project, id=project_id)
+                clock_entry.projects.add(project)
+
+            return JsonResponse({'message': 'Exit time registered successfully.'})
+        else:
+            return JsonResponse({'message': 'No active entry found or exit already registered.'}, status=400)
+
+    return JsonResponse({'message': 'Invalid request.'}, status=400)
 
 @login_required
 def get_clock_status(request):
@@ -218,6 +234,23 @@ def employee_detail(request, employee_id):
     }
     
     return render(request, 'employee_detail.html', context)
+
+@login_required
+def project_popup(request):
+    if request.method == 'POST':
+        form = ProjectSelectionForm(request.POST)
+        if form.is_valid():
+            selected_projects = form.cleaned_data['projects']
+            # You can now process the selected projects, for example, saving them to the database
+            for project in selected_projects:
+                # Assuming you have a Clock or Log model to link projects to the user's exit
+                # Clock.objects.create(user=request.user, project=project, exit_time=timezone.now())
+                pass
+            return redirect('success_page')  # Redirect to a success page or close the popup
+    else:
+        form = ProjectSelectionForm()
+    
+    return render(request, 'project_popup.html', {'form': form})
 
 @login_required
 def submit_request(request):

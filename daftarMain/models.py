@@ -34,6 +34,7 @@ class Clock(models.Model):
     entry_to_office = models.DateTimeField(null=True, blank=True)
     exit_from_office = models.DateTimeField(null=True, blank=True)
     office_user = models.ForeignKey(OfficeUser, on_delete=models.CASCADE, null=True, blank=True) # remove null, blank = true
+    projects = models.ManyToManyField('Project', related_name="clock_entries", blank=True)
 
     def __str__(self):
         return f"{self.office_user} - {self.entry_to_office}"
@@ -74,7 +75,7 @@ class Project(models.Model):
     description = models.TextField(null=True, blank=True)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
-    assigned_users = models.ManyToManyField('OfficeUser', related_name='projects')
+    assigned_users = models.ManyToManyField(OfficeUser, related_name='projects')
 
     def __str__(self):
         return self.name
