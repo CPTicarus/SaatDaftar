@@ -79,3 +79,16 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
+
+    def total_hours(self):
+        return sum(log.hours_spent for log in self.projecttimelog_set.all())
+
+    
+class ProjectTimeLog(models.Model):
+    office_user = models.ForeignKey(OfficeUser, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    hours_spent = models.FloatField(default=0)
+    log_date = models.DateField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('office_user', 'project', 'log_date')

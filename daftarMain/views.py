@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.http import JsonResponse, HttpResponseForbidden
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User 
-from django.db import IntegrityError
-from django.db.models import Sum, F
 from django.contrib import messages
 
-from .models import Clock, OfficeUser, OfficeManager, Leave, Project
+from django.db import IntegrityError
+from django.db.models import Sum, F
+
+from .models import Clock, OfficeUser, OfficeManager, Leave, Project, ProjectTimeLog
 from .forms import OfficeUserForm, RegularRequestForm, ProjectForm, ProjectSelectionForm
 
 #To redirect logins 
@@ -24,12 +26,12 @@ def dashboard(request):
 
 @login_required
 def office_user_page(request):
-    projects = Project.objects.all()
     office_user = get_object_or_404(OfficeUser, user=request.user)
+    assigned_projects = office_user.projects.all()
     
     context = {
         'office_user': office_user,
-        'projects': projects,
+        'projects': assigned_projects,  # Pass only the assigned projects
     }
     
     return render(request, 'office_user_page.html', context)
@@ -51,19 +53,41 @@ def register_exit(request):
     office_user = get_object_or_404(OfficeUser, user=request.user)
 
     if request.method == "POST":
-        # Register the exit time
+        # Get the most recent clock entry
         clock_entry = Clock.objects.filter(office_user=office_user).order_by('-entry_to_office').first()
+
         if clock_entry and clock_entry.exit_from_office is None:
+            # Register the exit time
             clock_entry.exit_from_office = timezone.now()
             clock_entry.save()
 
+            # Calculate the time spent in the office
+            time_spent = clock_entry.exit_from_office - clock_entry.entry_to_office
+
+            # Get projects assigned to the user
+            assigned_projects = office_user.projects.all()
+
             # Handle the selected projects
             project_ids = request.POST.getlist('projects')
-            for project_id in project_ids:
-                project = get_object_or_404(Project, id=project_id)
-                clock_entry.projects.add(project)
+            selected_projects = assigned_projects.filter(id__in=project_ids)
+            num_projects = selected_projects.count()
 
-            return JsonResponse({'message': 'Exit time registered successfully.'})
+            if num_projects > 0:
+                # Divide the total time spent across the selected projects
+                time_per_project = time_spent / num_projects
+
+                for project in selected_projects:
+                    # Log the time in the ProjectTimeLog
+                    ProjectTimeLog.objects.create(
+                        office_user=office_user,
+                        project=project,
+                        hours_spent=time_per_project.total_seconds() / 3600.0  # Convert seconds to hours
+                    )
+
+                    # Add the project to the clock entry
+                    clock_entry.projects.add(project)
+
+            return JsonResponse({'message': 'Exit time registered successfully and projects updated.'})
         else:
             return JsonResponse({'message': 'No active entry found or exit already registered.'}, status=400)
 
