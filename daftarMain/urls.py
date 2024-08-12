@@ -19,9 +19,10 @@ urlpatterns = [
     path('leave/approve/<int:leave_id>/', views.approve_leave, name='approve_leave'),
     path('leave/deny/<int:leave_id>/', views.deny_leave, name='deny_leave'),
 
-    path('projects/end/<int:project_id>/', views.end_project, name='end_project'),
     path('projects/', views.project_page, name='project_page'),
-    path('projects/<int:project_id>/edit/', views.edit_project, name='edit_project'),
+    path('projects/end/<int:project_id>/', views.end_project, name='end_project'),
+    path('project/<int:project_id>/', views.detail_project, name='detail_project'),
+    path('project/<int:project_id>/edit/', views.edit_project, name='edit_project'),
     path('projects/<int:project_id>/delete/', views.delete_project, name='delete_project'),
 
     # Office users urls

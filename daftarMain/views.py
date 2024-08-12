@@ -61,10 +61,7 @@ def register_exit(request):
             clock_entry.exit_from_office = timezone.now()
             clock_entry.save()
 
-            # Calculate the time spent in the office
             time_spent = clock_entry.exit_from_office - clock_entry.entry_to_office
-
-            # Get projects assigned to the user
             assigned_projects = office_user.projects.all()
 
             # Handle the selected projects
@@ -267,8 +264,6 @@ def project_popup(request):
             selected_projects = form.cleaned_data['projects']
             # You can now process the selected projects, for example, saving them to the database
             for project in selected_projects:
-                # Assuming you have a Clock or Log model to link projects to the user's exit
-                # Clock.objects.create(user=request.user, project=project, exit_time=timezone.now())
                 pass
             return redirect('success_page')  # Redirect to a success page or close the popup
     else:
@@ -337,9 +332,18 @@ def end_project(request, project_id):
     return redirect('project_page')
 
 @login_required
+def detail_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+
+    context = {
+        'project': project,
+    }
+    return render(request, 'detail_project.html', context)
+
+@login_required
 def edit_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
-    
+
     if request.method == "POST":
         form = ProjectForm(request.POST, instance=project)
         if form.is_valid():
@@ -348,7 +352,7 @@ def edit_project(request, project_id):
             return redirect('project_page')
     else:
         form = ProjectForm(instance=project)
-    
+
     context = {
         'form': form,
         'project': project,
