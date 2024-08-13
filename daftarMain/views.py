@@ -257,6 +257,25 @@ def employee_detail(request, employee_id):
     return render(request, 'employee_detail.html', context)
 
 @login_required
+def edit_employee(request, employee_id):
+    employee = get_object_or_404(OfficeUser, id=employee_id)
+
+    if request.method == "POST":
+        form = OfficeUserForm(request.POST, request.FILES, instance=employee)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Employee "{employee.first_name} {employee.last_name}" has been successfully updated.')
+            return redirect('employee_detail', employee_id=employee.id)
+    else:
+        form = OfficeUserForm(instance=employee)
+
+    context = {
+        'form': form,
+        'employee': employee,
+    }
+    return render(request, 'edit_employee.html', context)
+
+@login_required
 def project_popup(request):
     if request.method == 'POST':
         form = ProjectSelectionForm(request.POST)
@@ -420,14 +439,7 @@ def calculate_hours(request, employee_id):
     })
 
 def calculate_project_hours(project, start_date=None, end_date=None):
-    """
-    Calculate the total hours worked on a project within a given date range.
     
-    :param project: The Project instance.
-    :param start_date: The start date of the range (optional).
-    :param end_date: The end date of the range (optional).
-    :return: Total hours worked.
-    """
     if start_date is None:
         start_date = timezone.datetime.min.date()
     if end_date is None:

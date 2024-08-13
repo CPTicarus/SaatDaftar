@@ -14,7 +14,8 @@ urlpatterns = [
     path('office_manager/add-user/', views.add_office_user, name='add_office_user'),
     
     path('employee/<int:employee_id>/', views.employee_detail, name='employee_detail'),
-    path('employee/<int:employee_id>/registered-hours/', views.calculate_hours, name='registered_hours'),  # New URL pattern
+    path('employee/<int:employee_id>/registered-hours/', views.calculate_hours, name='registered_hours'),
+    path('employee/<int:employee_id>/edit/', views.edit_employee, name='edit_employee'),
 
     path('leave/approve/<int:leave_id>/', views.approve_leave, name='approve_leave'),
     path('leave/deny/<int:leave_id>/', views.deny_leave, name='deny_leave'),
