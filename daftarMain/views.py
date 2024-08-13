@@ -335,10 +335,32 @@ def end_project(request, project_id):
 def detail_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
+    # Get optional date range filter from request
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    # Convert the date strings to date objects if provided
+    if start_date:
+        start_date = timezone.datetime.strptime(start_date, '%Y-%m-%d').date()
+    if end_date:
+        end_date = timezone.datetime.strptime(end_date, '%Y-%m-%d').date()
+
+    # Calculate total hours worked on the project
+    total_hours = calculate_project_hours(project, start_date, end_date)
+
+    # Convert the total hours to hours and minutes
+    total_hours_int = int(total_hours)  # Extract the full hours part
+    total_minutes = int((total_hours - total_hours_int) * 60)  # Convert fractional hours to minutes
+
     context = {
         'project': project,
+        'total_hours_int': total_hours_int,
+        'total_minutes': total_minutes,
+        'start_date': start_date,
+        'end_date': end_date,
     }
     return render(request, 'detail_project.html', context)
+
 
 @login_required
 def edit_project(request, project_id):
@@ -396,3 +418,28 @@ def calculate_hours(request, employee_id):
         'start_date': start_date,
         'end_date': end_date,
     })
+
+def calculate_project_hours(project, start_date=None, end_date=None):
+    """
+    Calculate the total hours worked on a project within a given date range.
+    
+    :param project: The Project instance.
+    :param start_date: The start date of the range (optional).
+    :param end_date: The end date of the range (optional).
+    :return: Total hours worked.
+    """
+    if start_date is None:
+        start_date = timezone.datetime.min.date()
+    if end_date is None:
+        end_date = timezone.now().date()
+
+    # Fetch the time logs within the date range
+    time_logs = ProjectTimeLog.objects.filter(
+        project=project,
+        log_date__range=(start_date, end_date)
+    )
+    
+    total_hours = sum(log.hours_spent for log in time_logs)
+    
+    return total_hours
+

@@ -43,13 +43,13 @@
             margin: 10px 0;
             border: none;
             border-radius: 4px;
-            background-color: #007bff;
+            background-color: #333;
             color: #fff;
             font-size: 16px;
             cursor: pointer;
         }
         .button:hover {
-            background-color: #0056b3;
+            background-color: #555;
         }
         .back-link {
             display: inline-block;
@@ -66,20 +66,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>Edit Project</h1>
+        <h1>Edit Project: {{ project.name }}</h1>
 
-        <!-- Display messages -->
-        <div class="messages">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        </div>
-
-        <!-- Edit Project Form -->
         <form method="POST">
             {% csrf_token %}
             <div class="form-group">
@@ -105,7 +93,7 @@
             <button type="submit" class="button">Save Changes</button>
         </form>
 
-        <a href="{% url 'project_page' %}" class="back-link">Back to Projects</a>
+        <a href="{% url 'project_page' %}" class="back-link">Back to Project Page</a>
     </div>
 </body>
 </html>
