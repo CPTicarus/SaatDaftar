@@ -117,7 +117,7 @@
             </div>
             <div class="form-group">
                 <label for="id_date_of_birth">Date of Birth:</label>
-                <input type="date" name="date_of_birth" id="id_date_of_birth" required>
+                <input type="date" name="date_of_birth" id="id_date_of_birth" >
             </div>
             <div class="form-group">
                 <label for="id_code_meli">Code Meli:</label>
@@ -125,7 +125,7 @@
             </div>
             <div class="form-group">
                 <label for="id_home_phone">Home Phone:</label>
-                <input type="text" name="home_phone" id="id_home_phone" required>
+                <input type="text" name="home_phone" id="id_home_phone" >
             </div>
             <div class="form-group">
                 <label for="id_phone_number">Phone Number (Username):</label>
@@ -133,15 +133,19 @@
             </div>
             <div class="form-group">
                 <label for="id_staff_number">Staff Number:</label>
-                <input type="text" name="staff_number" id="id_staff_number" required>
+                <input type="text" name="staff_number" id="id_staff_number" >
             </div>
             <div class="form-group">
                 <label for="id_address">Address:</label>
-                <textarea name="address" id="id_address" rows="4" required></textarea>
+                <textarea name="address" id="id_address" rows="4" ></textarea>
             </div>
             <div class="form-group">
                 <label for="id_profile_picture">Profile Picture:</label>
                 <input type="file" name="profile_picture" id="id_profile_picture">
+            </div>
+            <div class="form-group">
+                <label for="id_have_bime">Bime:</label>
+                <input type="checkbox" name="have_bime" id="id_have_bime" {% if employee.have_bime %}checked{% endif %}>
             </div>
             <button type="submit">Create Employee</button>
         </form>

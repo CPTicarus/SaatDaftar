@@ -3,7 +3,7 @@ from .models import OfficeManager, OfficeUser
 
 @admin.register(OfficeManager)
 class OfficeManagerAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'phone', 'birth_date', 'code_meli')
+    list_display = ('full_name', 'email', 'phone', 'birth_date', 'code_meli')
 
 @admin.register(OfficeUser)
 class OfficeUserAdmin(admin.ModelAdmin):

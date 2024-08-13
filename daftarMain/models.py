@@ -5,14 +5,14 @@ from django.contrib.auth.models import User
 
 class OfficeManager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True) # remove null, blank = true
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
+    full_name = models.CharField(max_length=50,null=True,blank=True)
     phone = models.CharField(max_length=15, unique=True)
     birth_date = models.DateField(null=True, blank=True)
     code_meli = models.CharField(max_length=10, null=True, blank=True)
+    email = models.EmailField(max_length=254, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.full_name}"
 
 class OfficeUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True) # remove null, blank = true
@@ -26,6 +26,7 @@ class OfficeUser(models.Model):
     staff_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
     staff_pic = models.ImageField(upload_to='staff_pics/', null=True, blank=True)
     address = models.TextField(null=True, blank=True)
+    have_bime = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
