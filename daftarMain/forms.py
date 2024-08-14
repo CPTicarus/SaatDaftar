@@ -4,8 +4,12 @@ from .models import OfficeUser,RegularRequest,Project
 class OfficeUserForm(forms.ModelForm):
     class Meta:
         model = OfficeUser
-        fields = ['first_name', 'last_name', 'phone', 'home_phone', 'birth_date', 'code_meli', 'staff_number', 'staff_pic', 'address', 'have_bime']
-
+        fields = [
+            'first_name', 'last_name', 'birth_date',
+            'code_meli', 'home_phone', 'phone',
+            'staff_number', 'address', 'staff_pic', 'have_bime'
+        ]
+        
 class RegularRequestForm(forms.ModelForm):
     class Meta:
         model = RegularRequest

@@ -107,52 +107,27 @@
         <!-- Form to add new office user -->
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="form-group">
-                <label for="id_first_name">First Name:</label>
-                <input type="text" name="first_name" id="id_first_name" required>
-            </div>
-            <div class="form-group">
-                <label for="id_last_name">Last Name:</label>
-                <input type="text" name="last_name" id="id_last_name" required>
-            </div>
-            <div class="form-group">
-                <label for="id_date_of_birth">Date of Birth:</label>
-                <input type="date" name="date_of_birth" id="id_date_of_birth" >
-            </div>
-            <div class="form-group">
-                <label for="id_code_meli">Code Meli:</label>
-                <input type="text" name="code_meli" id="id_code_meli" required>
-            </div>
-            <div class="form-group">
-                <label for="id_home_phone">Home Phone:</label>
-                <input type="text" name="home_phone" id="id_home_phone" >
-            </div>
-            <div class="form-group">
-                <label for="id_phone_number">Phone Number (Username):</label>
-                <input type="text" name="phone_number" id="id_phone_number" required>
-            </div>
-            <div class="form-group">
-                <label for="id_staff_number">Staff Number:</label>
-                <input type="text" name="staff_number" id="id_staff_number" >
-            </div>
-            <div class="form-group">
-                <label for="id_address">Address:</label>
-                <textarea name="address" id="id_address" rows="4" ></textarea>
-            </div>
-            <div class="form-group">
-                <label for="id_profile_picture">Profile Picture:</label>
-                <input type="file" name="profile_picture" id="id_profile_picture">
-            </div>
-            <div class="form-group">
-                <label for="id_have_bime">Bime:</label>
-                <input type="checkbox" name="have_bime" id="id_have_bime" {% if employee.have_bime %}checked{% endif %}>
-            </div>
+            {{ form.as_p }}
             <button type="submit">Create Employee</button>
         </form>
+
+        <!-- Display form errors -->
+        {% if form.errors %}
+            <div class="messages error">
+                <ul>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
 
         <a href="{% url 'office_manager_page' %}" class="back-link">Back to Manager Page</a>
     </div>
 </body>
 </html>
-
-

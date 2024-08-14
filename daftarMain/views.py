@@ -147,11 +147,10 @@ def add_office_user(request):
         form = OfficeUserForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                # Check if a user with the same phone number already exists
+                # Correct the key to access phone
                 if User.objects.filter(username=form.cleaned_data['phone']).exists():
                     messages.error(request, 'The phone number is already associated with an existing user.')
                 else:
-                    # The User instance is automatically created when the OfficeUser is saved
                     office_user = form.save(commit=False)
                     user = User.objects.create_user(
                         username=form.cleaned_data['phone'],
@@ -171,6 +170,7 @@ def add_office_user(request):
         form = OfficeUserForm()
 
     return render(request, 'add_office_user.html', {'form': form})
+
 
 @login_required
 def leave_page(request):
