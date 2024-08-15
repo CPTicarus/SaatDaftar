@@ -9,17 +9,22 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('dashboard/', views.dashboard, name='dashboard'),
     
-    # Office manager urls
+    # Office manager URLs
     path('office_manager/', views.office_manager_page, name='office_manager_page'),
     path('office_manager/add-user/', views.add_office_user, name='add_office_user'),
     
+    # Employee-related URLs
     path('employee/<int:employee_id>/', views.employee_detail, name='employee_detail'),
     path('employee/<int:employee_id>/registered-hours/', views.calculate_hours, name='registered_hours'),
+    path('employee/<int:employee_id>/delete-hour/<int:entry_id>/', views.delete_registered_hour, name='delete_registered_hour'),
+    path('employee/<int:employee_id>/add-reward-punishment/', views.add_reward_punishment, name='add_reward_punishment'),
     path('employee/<int:employee_id>/edit/', views.edit_employee, name='edit_employee'),
 
+    # Leave management URLs
     path('leave/approve/<int:leave_id>/', views.approve_leave, name='approve_leave'),
     path('leave/deny/<int:leave_id>/', views.deny_leave, name='deny_leave'),
 
+    # Project-related URLs
     path('projects/', views.project_page, name='project_page'),
     path('projects/end/<int:project_id>/', views.end_project, name='end_project'),
     path('project/<int:project_id>/', views.detail_project, name='detail_project'),

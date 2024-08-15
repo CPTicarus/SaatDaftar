@@ -34,6 +34,7 @@ class OfficeUser(models.Model):
 class Clock(models.Model):
     entry_to_office = models.DateTimeField(null=True, blank=True)
     exit_from_office = models.DateTimeField(null=True, blank=True)
+    is_reward_punishment = models.BooleanField(default=False) 
     office_user = models.ForeignKey(OfficeUser, on_delete=models.CASCADE, null=True, blank=True) # remove null, blank = true
     projects = models.ManyToManyField('Project', related_name="clock_entries", blank=True)
 

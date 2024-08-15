@@ -8,6 +8,7 @@ from django.contrib import messages
 
 from django.db import IntegrityError
 from django.db.models import Sum, F
+from datetime import datetime, timedelta
 
 from .models import Clock, OfficeUser, OfficeManager, Leave, Project, ProjectTimeLog
 from .forms import OfficeUserForm, RegularRequestForm, ProjectForm, ProjectSelectionForm
@@ -254,6 +255,7 @@ def employee_detail(request, employee_id):
     
     return render(request, 'employee_detail.html', context)
 
+@login_required
 def edit_employee(request, employee_id):
     employee = OfficeUser.objects.get(id=employee_id)
     user = employee.user
@@ -453,6 +455,48 @@ def calculate_hours(request, employee_id):
         'start_date': start_date,
         'end_date': end_date,
     })
+
+@login_required
+def delete_registered_hour(request, entry_id):
+    entry = get_object_or_404(Clock, id=entry_id)
+    employee_id = entry.office_user.id
+    
+    if request.method == "POST":
+        entry.delete()
+        messages.success(request, 'The registered hour entry has been successfully deleted.')
+    
+    return redirect('calculate_hours', employee_id=employee_id)
+
+@login_required
+def add_reward_punishment(request, employee_id):
+    employee = get_object_or_404(OfficeUser, id=employee_id)
+
+    if request.method == "POST":
+        date = request.POST.get('date')
+        hours = float(request.POST.get('hours'))
+        action_type = request.POST.get('type')
+
+        # Convert the date to a datetime object
+        date_time = timezone.make_aware(datetime.strptime(date, "%Y-%m-%d"))
+
+        # Calculate the exit time based on the hours and action type
+        if action_type == "punishment":
+            hours = -hours  # Subtract hours for punishment
+
+        exit_time = date_time + timedelta(hours=hours)
+
+        # Create a Clock entry with the calculated entry and exit times
+        Clock.objects.create(
+            office_user=employee,
+            entry_to_office=date_time,
+            exit_from_office=exit_time,
+            is_reward_punishment=True,
+        )
+
+        messages.success(request, f'Successfully added a {action_type} of {hours} hours for {employee.first_name} {employee.last_name}.')
+        return redirect('registered_hours', employee_id=employee.id)
+
+    return render(request, 'registered_hours.html', {'employee': employee})
 
 def calculate_project_hours(project, start_date=None, end_date=None):
     
