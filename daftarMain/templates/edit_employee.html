@@ -117,7 +117,7 @@
             </div>
             <div class="form-group">
                 <label for="id_date_of_birth">Date of Birth:</label>
-                <input type="date" name="date_of_birth" id="id_date_of_birth" value="{{ form.date_of_birth.value }}" >
+                <input type="date" name="date_of_birth" id="id_date_of_birth" value="{{ form.date_of_birth.value }}">
             </div>
             <div class="form-group">
                 <label for="id_code_meli">Code Meli:</label>
@@ -125,24 +125,35 @@
             </div>
             <div class="form-group">
                 <label for="id_home_phone">Home Phone:</label>
-                <input type="text" name="home_phone" id="id_home_phone" value="{{ form.home_phone.value }}" >
+                <input type="text" name="home_phone" id="id_home_phone" value="{{ form.home_phone.value }}">
             </div>
             <div class="form-group">
-                <label for="id_phone_number">Phone Number (Username):</label>
-                <input type="text" name="phone_number" id="id_phone_number" value="{{ form.phone_number.value }}" required>
+                <label for="id_phone">Phone Number:</label>
+                <input type="text" name="phone" id="id_phone" value="{{ form.phone.value }}" required>
             </div>
             <div class="form-group">
                 <label for="id_staff_number">Staff Number:</label>
-                <input type="text" name="staff_number" id="id_staff_number" value="{{ form.staff_number.value }}" >
+                <input type="text" name="staff_number" id="id_staff_number" value="{{ form.staff_number.value }}">
             </div>
             <div class="form-group">
                 <label for="id_address">Address:</label>
-                <textarea name="address" id="id_address" rows="4" >{{ form.address.value }}</textarea>
+                <textarea name="address" id="id_address" rows="4">{{ form.address.value }}</textarea>
             </div>
             <div class="form-group">
                 <label for="id_profile_picture">Profile Picture:</label>
                 <input type="file" name="profile_picture" id="id_profile_picture">
             </div>
+            
+            <!-- New fields for username and password -->
+            <div class="form-group">
+                <label for="id_new_username">New Username:</label>
+                <input type="text" name="new_username" id="id_new_username" value="{{ form.new_username.value }}">
+            </div>
+            <div class="form-group">
+                <label for="id_new_password">New Password:</label>
+                <input type="password" name="new_password" id="id_new_password">
+            </div>
+
             <button type="submit">Save Changes</button>
         </form>
 

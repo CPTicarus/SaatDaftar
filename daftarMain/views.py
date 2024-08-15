@@ -147,7 +147,6 @@ def add_office_user(request):
         form = OfficeUserForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                # Correct the key to access phone
                 if User.objects.filter(username=form.cleaned_data['phone']).exists():
                     messages.error(request, 'The phone number is already associated with an existing user.')
                 else:
@@ -170,7 +169,6 @@ def add_office_user(request):
         form = OfficeUserForm()
 
     return render(request, 'add_office_user.html', {'form': form})
-
 
 @login_required
 def leave_page(request):
@@ -256,24 +254,42 @@ def employee_detail(request, employee_id):
     
     return render(request, 'employee_detail.html', context)
 
-@login_required
 def edit_employee(request, employee_id):
-    employee = get_object_or_404(OfficeUser, id=employee_id)
+    employee = OfficeUser.objects.get(id=employee_id)
+    user = employee.user
 
     if request.method == "POST":
         form = OfficeUserForm(request.POST, request.FILES, instance=employee)
+
         if form.is_valid():
             form.save()
-            messages.success(request, f'Employee "{employee.first_name} {employee.last_name}" has been successfully updated.')
+
+            new_username = request.POST.get('new_username')
+            new_password = request.POST.get('new_password')
+
+            # Update the username if provided
+            if new_username and new_username != user.username:
+                if User.objects.filter(username=new_username).exists():
+                    messages.error(request, 'The username is already taken.')
+                else:
+                    user.username = new_username
+                    user.save()
+
+            # Update the password if provided
+            if new_password:
+                user.set_password(new_password)
+                user.save()
+
+            messages.success(request, f'{employee.first_name} {employee.last_name} has been updated successfully.')
             return redirect('employee_detail', employee_id=employee.id)
+
     else:
         form = OfficeUserForm(instance=employee)
 
-    context = {
+    return render(request, 'edit_employee.html', {
         'form': form,
         'employee': employee,
-    }
-    return render(request, 'edit_employee.html', context)
+    })
 
 @login_required
 def project_popup(request):
