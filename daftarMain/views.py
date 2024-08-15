@@ -8,7 +8,9 @@ from django.contrib import messages
 
 from django.db import IntegrityError
 from django.db.models import Sum, F
+
 from datetime import datetime, timedelta
+from collections import defaultdict
 
 from .models import Clock, OfficeUser, OfficeManager, Leave, Project, ProjectTimeLog
 from .forms import OfficeUserForm, RegularRequestForm, ProjectForm, ProjectSelectionForm
@@ -383,18 +385,40 @@ def detail_project(request, project_id):
         end_date = timezone.datetime.strptime(end_date, '%Y-%m-%d').date()
 
     # Calculate total hours worked on the project
-    total_hours = calculate_project_hours(project, start_date, end_date)
+    total_hours = 0
+    user_contributions = {}
 
-    # Convert the total hours to hours and minutes
-    total_hours_int = int(total_hours)  # Extract the full hours part
-    total_minutes = int((total_hours - total_hours_int) * 60)  # Convert fractional hours to minutes
+    for entry in project.clock_entries.all():
+        if start_date and entry.entry_to_office.date() < start_date:
+            continue
+        if end_date and entry.exit_from_office.date() > end_date:
+            continue
+
+        hours_worked = entry.hours_worked()  # Calculate hours worked
+        total_hours += hours_worked
+
+        if entry.office_user in user_contributions:
+            user_contributions[entry.office_user] += hours_worked
+        else:
+            user_contributions[entry.office_user] = hours_worked
+
+    # Convert total hours into hours and minutes
+    total_hours_int = int(total_hours)
+    total_minutes = int((total_hours - total_hours_int) * 60)
+
+    # Convert user contributions to hours and minutes
+    user_contributions_converted = {}
+    for office_user, hours in user_contributions.items():
+        hours_int = int(hours)
+        minutes = int((hours - hours_int) * 60)
+        user_contributions_converted[office_user] = f"{hours_int} hours {minutes} minutes"
 
     context = {
         'project': project,
-        'total_hours_int': total_hours_int,
-        'total_minutes': total_minutes,
+        'total_hours': f"{total_hours_int} hours {total_minutes} minutes",
         'start_date': start_date,
         'end_date': end_date,
+        'user_contributions': user_contributions_converted,
     }
     return render(request, 'detail_project.html', context)
 
@@ -457,15 +481,13 @@ def calculate_hours(request, employee_id):
     })
 
 @login_required
-def delete_registered_hour(request, entry_id):
-    entry = get_object_or_404(Clock, id=entry_id)
-    employee_id = entry.office_user.id
-    
-    if request.method == "POST":
-        entry.delete()
-        messages.success(request, 'The registered hour entry has been successfully deleted.')
-    
-    return redirect('calculate_hours', employee_id=employee_id)
+def delete_registered_hour(request, employee_id, entry_id):
+    # Fetch the entry using entry_id and employee_id for validation
+    entry = get_object_or_404(Clock, id=entry_id, office_user_id=employee_id)
+    entry.delete()
+    messages.success(request, "The entry has been successfully deleted.")
+
+    return redirect('registered_hours', employee_id=employee_id)
 
 @login_required
 def add_reward_punishment(request, employee_id):

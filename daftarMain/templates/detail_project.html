@@ -89,7 +89,7 @@
             <p>{{ project.assigned_users.all|join:", " }}</p>
         </div>
 
-        <h2>Total Hours Worked: {{ total_hours_int }} hours {{ total_minutes }} minutes</h2>
+        <h2>Total Hours Worked: {{ total_hours }}</h2>
 
         <form method="GET" action="">
             <div class="form-group">
@@ -102,6 +102,24 @@
             </div>
             <button type="submit" class="button">Filter</button>
         </form>
+
+        <h3>Contributions by Office Users</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Office User</th>
+                    <th>Hours Contributed</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for office_user, hours in user_contributions.items %}
+                    <tr>
+                        <td>{{ office_user.first_name }} {{ office_user.last_name }}</td>
+                        <td>{{ hours }}</td>  <!-- Displaying the formatted hours and minutes -->
+                    </tr>
+                {% endfor %}
+            </tbody>    
+        </table>
 
         <a href="{% url 'project_page' %}" class="back-link">Back to Project Page</a>
         <a href="{% url 'edit_project' project.id %}" class="button">Edit Project</a>

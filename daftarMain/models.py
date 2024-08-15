@@ -40,6 +40,12 @@ class Clock(models.Model):
 
     def __str__(self):
         return f"{self.office_user} - {self.entry_to_office}"
+    
+    def hours_worked(self):
+        if self.entry_to_office and self.exit_from_office:
+            time_difference = self.exit_from_office - self.entry_to_office
+            return time_difference.total_seconds() / 3600.0  # Convert seconds to hours
+        return 0
 
 class Leave(models.Model):
     office_user = models.ForeignKey(OfficeUser, on_delete=models.CASCADE)

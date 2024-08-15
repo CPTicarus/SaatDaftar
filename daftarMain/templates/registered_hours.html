@@ -11,6 +11,23 @@
             margin: 0;
             padding: 0;
         }
+        .messages {
+            list-style-type: none;
+            padding: 0;
+        }
+        .messages .alert {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .messages .alert.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .messages .alert.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
 
         .container {
             width: 80%;
@@ -119,8 +136,18 @@
 </head>
 <body>
     <div class="container">
+        <!-- Messages Block -->
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="alert {{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
         <h2>Working Hours for {{ employee.first_name }} {{ employee.last_name }}</h2>
 
+        <!-- Top section with Calculate and Reward/Punishment buttons -->
         <form method="get" style="display: flex; gap: 20px; align-items: center;">
             <div>
                 <label for="start_date">Start Date:</label>
@@ -208,4 +235,5 @@
         <a href="{% url 'employee_detail' employee.id %}" class="back-link">Back to Employee Details</a>
     </div>
 </body>
+
 </html>
