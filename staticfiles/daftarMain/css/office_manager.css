@@ -1,0 +1,201 @@
+.manager-avatar-icon {
+    position: absolute;
+    top: 37px;
+    left: 308px;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+}
+.manager-name {
+    position: absolute;
+    top: 48px;
+    left: 239px;
+    font-size: 12px;
+    text-decoration: underline;
+    font-weight: 500;
+}
+.icon-image {
+    position: absolute;
+    height: 99.02%;
+    width: 34.02%;
+    top: 0%;
+    right: 0%;
+    bottom: 0.98%;
+    left: 65.98%;
+    max-width: 100%;
+    overflow: hidden;
+    max-height: 100%;
+}
+.title {
+    position: absolute;
+    top: calc(50% - 14px);
+    right: 0px;
+}
+.description {
+    position: absolute;
+    top: calc(50% + 7px);
+    right: 0px;
+    font-size: 8px;
+    line-height: 115%;
+    color: #a3a3a3;
+}
+.alert-circle {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    border-radius: 50%;
+    background-color: #ff0000;
+    width: 4px;
+    height: 4px;
+}
+.text {
+    position: absolute;
+    height: 100%;
+    width: 65.57%;
+    top: 0%;
+    right: 34.43%;
+    bottom: 0%;
+    left: 0%;
+    overflow: hidden;
+}
+.card-34 {
+    position: absolute;
+    top: 121px;
+    left: 100px;
+    border-radius: 12px;
+    background-color: #fff;
+    border: 1px solid #d4d4d4;
+    box-sizing: border-box;
+    width: 244px;
+    height: 82px;
+}
+.card-341 {
+    position: absolute;
+    top: 301px;
+    left: 100px;
+    border-radius: 12px;
+    background-color: #fff;
+    border: 1px solid #d4d4d4;
+    box-sizing: border-box;
+    width: 244px;
+    height: 82px;
+}
+.title2 {
+    position: absolute;
+    top: calc(50% - 13.5px);
+    right: 0px;
+}
+.description2 {
+    position: absolute;
+    top: calc(50% + 7.5px);
+    right: 0px;
+    font-size: 8px;
+    line-height: 115%;
+    color: #a3a3a3;
+}
+.title-parent {
+    position: absolute;
+    top: calc(50% - 14px);
+    right: 0px;
+    width: 91px;
+    height: 27px;
+}
+.card-342 {
+    position: absolute;
+    top: 211px;
+    left: 16px;
+    border-radius: 12px;
+    background-color: #fff;
+    border: 1px solid #d4d4d4;
+    box-sizing: border-box;
+    width: 244px;
+    height: 82px;
+}
+.title-group {
+    position: absolute;
+    top: calc(50% - 14px);
+    right: 0px;
+    width: 100px;
+    height: 27px;
+}
+.card-343 {
+    position: absolute;
+    top: 391px;
+    left: 16px;
+    border-radius: 12px;
+    background-color: #fff;
+    border: 1px solid #d4d4d4;
+    box-sizing: border-box;
+    width: 244px;
+    height: 82px;
+}
+.card-14 {
+    position: absolute;
+    top: 121px;
+    left: 16px;
+    border-radius: 12px;
+    background-color: rgba(187, 187, 187, 0.25);
+    width: 76px;
+    height: 82px;
+    overflow: hidden;
+}
+.card-141 {
+    position: absolute;
+    top: 301px;
+    left: 16px;
+    border-radius: 12px;
+    background-color: rgba(187, 187, 187, 0.25);
+    width: 76px;
+    height: 82px;
+    overflow: hidden;
+}
+.card-142 {
+    position: absolute;
+    top: 211px;
+    left: 268px;
+    border-radius: 12px;
+    background-color: rgba(187, 187, 187, 0.25);
+    width: 76px;
+    height: 82px;
+    overflow: hidden;
+}
+.card-143 {
+    position: absolute;
+    top: 391px;
+    left: 268px;
+    border-radius: 12px;
+    background-color: rgba(187, 187, 187, 0.25);
+    width: 76px;
+    height: 82px;
+    overflow: hidden;
+}
+.management-menu-child {
+    position: absolute;
+    top: 54px;
+    left: 229px;
+    width: 6px;
+    height: 4px;
+}
+.undraw-undraw-undraw-undraw-un-icon {
+    position: absolute;
+    top: 521px;
+    left: calc(50% - 178px);
+    width: 356px;
+    height: 192px;
+    overflow: hidden;
+    opacity: 0.25;
+}
+.management-menu {
+    width: 100%;
+    position: relative;
+    border-radius: 12px;
+    background-color: #fafafa;
+    height: 800px;
+    overflow: hidden;
+    text-align: right;
+    font-size: 16px;
+    color: #000;
+    font-family: Vazirmatn;
+}
+
