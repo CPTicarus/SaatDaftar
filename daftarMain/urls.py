@@ -41,4 +41,6 @@ urlpatterns = [
     path('leave/', views.leave_page, name='leave_page'),
     path('submit_request/', views.submit_request, name='submit_request'),
     
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
