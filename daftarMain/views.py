@@ -34,7 +34,7 @@ def office_user_page(request):
     
     context = {
         'office_user': office_user,
-        'projects': assigned_projects,  # Pass only the assigned projects
+        'projects': assigned_projects,
     }
     
     return render(request, 'office_user_page.html', context)
@@ -73,7 +73,6 @@ def register_exit(request):
             num_projects = selected_projects.count()
 
             if num_projects > 0:
-                # Divide the total time spent across the selected projects
                 time_per_project = time_spent / num_projects
 
                 for project in selected_projects:
@@ -280,7 +279,7 @@ def project_popup(request):
             # You can now process the selected projects, for example, saving them to the database
             for project in selected_projects:
                 pass
-            return redirect('success_page')  # Redirect to a success page or close the popup
+            return redirect('success_page')  
     else:
         form = ProjectSelectionForm()
     
@@ -292,7 +291,7 @@ def submit_request(request):
         form = RegularRequestForm(request.POST)
         if form.is_valid():
             regular_request = form.save(commit=False)
-            regular_request.user = request.user.officeuser  # Associate with the logged-in user
+            regular_request.user = request.user.officeuser  
             regular_request.save()
             return redirect('office_user_page')
     else:
@@ -305,11 +304,11 @@ def project_page(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST)
         if form.is_valid():
-            project = form.save(commit=False)  # Save the form data without committing to the DB
-            project.save()  # Now commit to the DB
+            project = form.save(commit=False) 
+            project.save()  
             form.save_m2m()  # Save many-to-many relationships, required for assigned_users
             
-            messages.success(request, 'Project created successfully!')  # Add success message
+            messages.success(request, 'Project created successfully!')  
             return redirect('project_page')
     else:
         form = ProjectForm()
@@ -360,7 +359,6 @@ def detail_project(request, project_id):
     if end_date:
         end_date = timezone.datetime.strptime(end_date, '%Y-%m-%d').date()
 
-    # Calculate total hours worked on the project
     total_hours = 0
     user_contributions = {}
 
@@ -444,7 +442,6 @@ def calculate_hours(request, employee_id):
         if total_seconds_worked:
             total_hours = total_seconds_worked.total_seconds() / 3600  # Convert to hours
 
-        # Calculate hours worked for each entry and attach it to the entry
         for entry in clock_entries:
             entry.hours_worked = (entry.exit_from_office - entry.entry_to_office).total_seconds() / 3600
 
@@ -476,14 +473,10 @@ def add_reward_punishment(request, employee_id):
 
         # Convert the date to a datetime object
         date_time = timezone.make_aware(datetime.strptime(date, "%Y-%m-%d"))
-
-        # Calculate the exit time based on the hours and action type
         if action_type == "punishment":
-            hours = -hours  # Subtract hours for punishment
+            hours = -hours  
 
         exit_time = date_time + timedelta(hours=hours)
-
-        # Create a Clock entry with the calculated entry and exit times
         Clock.objects.create(
             office_user=employee,
             entry_to_office=date_time,
@@ -535,3 +528,38 @@ def staff_management(request):
     }
     
     return render(request, 'staff_management.html', context)
+
+# temp for old system
+@login_required
+def office_manager_view(request):
+    office_manager = get_object_or_404(OfficeManager, user=request.user)
+    employees = OfficeUser.objects.filter(office_admin=office_manager)
+
+    employee_statuses = []
+    for employee in employees:
+        # Check if the employee is in the office
+        last_clock_entry = Clock.objects.filter(office_user=employee).order_by('-entry_to_office').first()
+        is_in_office = last_clock_entry and not last_clock_entry.exit_from_office
+
+        # Check if the employee has a pending or ongoing leave request
+        now = timezone.now()
+        has_leave_request = Leave.objects.filter(
+            office_user=employee,
+            leave_type='daily',
+            start_date__lte=now,
+            end_date__gte=now
+        ).exists() or Leave.objects.filter(
+            office_user=employee,
+            leave_type='hourly',
+            start_time__lte=now,
+            end_time__gte=now
+        ).exists()
+
+        employee_statuses.append((employee, is_in_office, has_leave_request))
+
+    context = {
+        'office_manager': office_manager,
+        'employees': employee_statuses,
+    }
+    
+    return render(request, 'office_manager_view.html', context)

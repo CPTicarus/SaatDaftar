@@ -10,6 +10,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('request_handler/', views.request_handler, name='request_handler'),
     path('staff_management/', views.staff_management, name='staff_management'),
+    path('office_manager_view/', views.office_manager_view, name='office_manager_view'),
     
     # Office manager URLs
     path('office_manager/', views.office_manager_page, name='office_manager_page'),
