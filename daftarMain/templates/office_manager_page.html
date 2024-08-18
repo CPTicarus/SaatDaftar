@@ -5,66 +5,67 @@
   	<meta charset="utf-8">
   	<meta name="viewport" content="initial-scale=1, width=device-width">
   	
-  	<link rel="stylesheet"  href="{% static 'daftarMain/css/office_manager.css' %}" />
+  	<link rel="stylesheet" href="{% static 'daftarMain/css/office_manager.css' %}" />
   	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" />
-
 </head>
 <body>
   	
   	<div class="management-menu">
     		<img class="manager-avatar-icon" alt="" src="{% static 'daftarMain/images/manager-avatar.png' %}">
     		
-    		<div class="manager-name"> {{office_manager.full_name}} </div>
-    		<div class="card-34">
-      			<img class="icon-image" alt="" src="{% static 'daftarMain/images/mailicon.svg' %}">
-      			
-      			<div class="text">
-        				<b class="title">درخواست‌ها</b>
-        				<div class="description">درخواست‌های خروج، مرخصی و ...</div>
-        				<div class="alert-circle">
-        				</div>
-      			</div>
-    		</div>
-    		<div class="card-341">
-      			<img class="icon-image" alt="" src="{% static 'daftarMain/images/group.svg' %}">
-      			
-      			<div class="text">
-        				<b class="title">مدیریت پرسنل</b>
-        				<div class="description">مشاهده وضعیت حضور و فعالیت کارکنان</div>
-      			</div>
-    		</div>
-    		<div class="card-342">
-      			<img class="icon-image" alt="" src="{% static 'daftarMain/images/lampicon.svg' %}">
-      			
-      			<div class="text">
-        				<div class="title-parent">
-          					<b class="title2">پروژه‌ها</b>
-          					<div class="description2">پروژه‌هایی که باید انجام بشن</div>
-        				</div>
-      			</div>
-    		</div>
-    		<div class="card-343">
-      			<img class="icon-image" alt="" src="{% static 'daftarMain/images/lampicon.svg' %}">
-      			
-      			<div class="text">
-        				<div class="title-group">
-          					<b class="title2">ویرایش پروفایل</b>
-          					<div class="description2">ویرایش اطلاعات مدیر و شرکت</div>
-        				</div>
-      			</div>
-    		</div>
-    		<div class="card-14">
-    		</div>
-    		<div class="card-141">
-    		</div>
-    		<div class="card-142">
-    		</div>
-    		<div class="card-143">
-    		</div>
-    		<!--img class="management-menu-child" alt="" src="{% static 'daftarMain/images/walking.svg' %}"-->
+    		<div class="manager-name">{{ office_manager.full_name }}</div>
+    		
+    		<a href="{% url 'request_handler' %}">
+        		<div class="card-34">
+          			<img class="icon-image" alt="" src="{% static 'daftarMain/images/mailicon.svg' %}">
+          			<div class="text">
+            				<b class="title">درخواست‌ها</b>
+            				<div class="description">درخواست‌های خروج، مرخصی و ...</div>
+            				<div class="alert-circle"></div>
+          			</div>
+        		</div>
+    		</a>
+    		
+    		<a href="{% url 'staff_management' %}">
+        		<div class="card-341">
+          			<img class="icon-image" alt="" src="{% static 'daftarMain/images/group.svg' %}">
+          			<div class="text">
+            				<b class="title">مدیریت پرسنل</b>
+            				<div class="description">مشاهده وضعیت حضور و فعالیت کارکنان</div>
+          			</div>
+        		</div>
+    		</a>
+    		
+    		<a href="{% url 'project_page' %}">
+        		<div class="card-342">
+          			<img class="icon-image" alt="" src="{% static 'daftarMain/images/lampicon.svg' %}">
+          			<div class="text">
+            				<div class="title-parent">
+              					<b class="title2">پروژه‌ها</b>
+              					<div class="description2">پروژه‌هایی که باید انجام بشن</div>
+            				</div>
+          			</div>
+        		</div>
+    		</a>
+    		
+    		<a href="{% url 'project_page' %}">
+        		<div class="card-343">
+          			<img class="icon-image" alt="" src="{% static 'daftarMain/images/lampicon.svg' %}">
+          			<div class="text">
+            				<div class="title-group">
+              					<b class="title2">ویرایش پروفایل</b>
+              					<div class="description2">ویرایش اطلاعات مدیر و شرکت</div>
+            				</div>
+          			</div>
+        		</div>
+    		</a>
+    		
+    		<div class="card-14"></div>
+    		<div class="card-141"></div>
+    		<div class="card-142"></div>
+    		<div class="card-143"></div>
     		
     		<img class="undraw-undraw-undraw-undraw-un-icon" alt="" src="{% static 'daftarMain/images/walking.svg' %}">
-    		
   	</div>
 </body>
 </html>

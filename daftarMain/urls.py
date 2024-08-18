@@ -8,6 +8,8 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('request_handler/', views.request_handler, name='request_handler'),
+    path('staff_management/', views.staff_management, name='staff_management'),
     
     # Office manager URLs
     path('office_manager/', views.office_manager_page, name='office_manager_page'),

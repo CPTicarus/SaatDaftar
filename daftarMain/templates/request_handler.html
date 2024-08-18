@@ -1,0 +1,25 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+</head>
+<body>
+    <h1>All Requests</h1>
+    
+    <h2>Leave Requests</h2>
+    <ul>
+        {% for leave_request in leave_requests %}
+            <li>{{ leave_request.user }} requested leave from {{ leave_request.start_date }} to {{ leave_request.end_date }} for {{ leave_request.reason }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Regular Requests</h2>
+    <ul>
+        {% for regular_request in regular_requests %}
+            <li>{{ regular_request.user }} requested {{ regular_request.request_type }} on {{ regular_request.date }} with details: {{ regular_request.details }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

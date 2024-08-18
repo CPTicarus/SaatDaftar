@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+    <link rel="stylesheet" href="{% static 'daftarMain/css/staff_management.css' %}"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" />
+</head>
+<body>
+    <div class="staff-management">
+        <img class="manager-avatar-icon" alt="" src="{% static 'daftarMain/images/manager-avatar.png' %}">
+        <div class="manager-name">{{ office_manager.full_name }}</div>
+        
+        <div class="color-guide-parent">
+            <div class="color-guide">
+                  <div class="status">
+                  </div>
+                  <div class="div">غیب هماهنگ نشده</div>
+            </div>
+            <div class="color-guide1">
+                  <div class="status1">
+                  </div>
+                  <div class="div">مرخصی</div>
+            </div>
+            <div class="color-guide2">
+                  <div class="status2">
+                  </div>
+                  <div class="div">در میدان</div>
+            </div>
+            <div class="color-guide3">
+                  <div class="status3">
+                  </div>
+                  <div class="div">حاضر در دفتر</div>
+            </div>
+        </div>
+        
+        <div class="employees-table-parent">
+            <div class="employees-table">
+
+                <!-- Exit Column -->
+                <div class="exit-col">
+                    {% for clock in clocks_today %}
+                        <div class="exit-time">
+                            {% if clock.exit_from_office %}
+                                {{ clock.exit_from_office|date:"H:i" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Entry Column -->
+                <div class="enter-col">
+                    {% for clock in clocks_today %}
+                        <div class="enter-time">
+                            {% if clock.entry_to_office %}
+                                {{ clock.entry_to_office|date:"H:i" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Name and Status Column -->
+                <div class="name-status-col">
+                    {% for clock in clocks_today %}
+                        <div class="name-status">
+                            <div class="name">{{ clock.office_user.first_name }} {{ clock.office_user.last_name }}</div>
+                            <!-- Placeholder for status -->
+                            <div class="status4"></div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Header -->
+                <div class="header">
+                    <div class="header-row">
+                        <div class="col-header">ساعت خروج</div>
+                        <div class="co-l-header">ساعت ورود</div>
+                        <div class="col-header1">نام کارمند</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter">
+                <div class="div4">انتخاب تاریخ:</div>
+                <div class="select">
+                    <img class="iconchevron-down" alt="" src="{% static 'daftarMain/images/icon/chevron-down.svg' %}">
+                    <div class="div5">حروف الفبا</div>
+                </div>
+                <div class="div6">فیلتر بر اساس:</div>
+            </div>
+        </div>
+
+        <div class="select1">
+            <img class="iconchevron-down" alt="" src="{% static 'daftarMain/images/icon/chevron-down.svg' %}">
+            <div class="div5">چهارشنبه ۱۸ مرداد</div>
+        </div>
+
+        <div class="card-34-parent">
+            <div class="card-34">
+                <img class="icon-image" alt="" src="{% static 'daftarMain/images/Icon /addusericon.svg' %}">
+                <div class="text">
+                    <b class="title">افزودن کارمند</b>
+                    <div class="description">لیست کارمند‌ها را گسترش بدهید!</div>
+                </div>
+            </div>
+            <div class="card-14">
+                <div class="parent">
+                    <div class="div8">{{ clocks_today.count }}</div>
+                    <div class="div9">کارمند فعال</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

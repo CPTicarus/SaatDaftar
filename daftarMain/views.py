@@ -12,7 +12,7 @@ from django.db.models import Sum, F
 from datetime import datetime, timedelta
 from collections import defaultdict
 
-from .models import Clock, OfficeUser, OfficeManager, Leave, Project, ProjectTimeLog
+from .models import Clock, OfficeUser, OfficeManager, Leave, Project, ProjectTimeLog, RegularRequest
 from .forms import OfficeUserForm, RegularRequestForm, ProjectForm, ProjectSelectionForm
 
 #To redirect logins 
@@ -513,3 +513,25 @@ def calculate_project_hours(project, start_date=None, end_date=None):
     
     return total_hours
 
+def request_handler(request):
+    leave_requests = Leave.objects.all()
+    regular_requests = RegularRequest.objects.all()
+    
+    context = {
+        'leave_requests': leave_requests,
+        'regular_requests': regular_requests,
+    }
+    
+    return render(request, 'request_handler.html', context)
+
+def staff_management(request):
+    today = timezone.now().date()
+
+    # Fetch clock entries for today
+    clocks_today = Clock.objects.filter(entry_to_office__date=today)
+
+    context = {
+        'clocks_today': clocks_today,
+    }
+    
+    return render(request, 'staff_management.html', context)
