@@ -1,70 +1,116 @@
-{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  	<meta charset="utf-8">
-  	<meta name="viewport" content="initial-scale=1, width=device-width">
-  	
-  	<link rel="stylesheet"  href="{% static 'daftarMain/css/office_manager.css' %}" />
-  	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" />
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Office Manager Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5; /* Light background consistent with other pages */
+            color: #333;
+            text-align: center; /* Center-align text content */
+        }
+        .container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+        h1, h2 {
+            color: #222;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            margin-left: auto;
+            margin-right: auto; /* Center table */
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        table th {
+            background-color: #f2f2f2;
+            color: #555;
+        }
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        table tr:hover {
+            background-color: #f1f1f1;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            background-color: #333;
+            text-decoration: none;
+            font-size: 16px;
+            text-align: center;
+        }
+        .button:hover {
+            background-color: #555;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #555;
+            font-size: 16px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
-  	
-  	<div class="management-menu">
-    		<img class="manager-avatar-icon" alt="" src="{% static 'daftarMain/images/manager-avatar.png' %}">
-    		
-    		<div class="manager-name"> {{office_manager.full_name}} </div>
-    		<div class="card-34">
-      			<img class="icon-image" alt="" src="{% static 'daftarMain/images/mailicon.svg' %}">
-      			
-      			<div class="text">
-        				<b class="title">درخواست‌ها</b>
-        				<div class="description">درخواست‌های خروج، مرخصی و ...</div>
-        				<div class="alert-circle">
-        				</div>
-      			</div>
-    		</div>
-    		<div class="card-341">
-      			<img class="icon-image" alt="" src="{% static 'daftarMain/images/group.svg' %}">
-      			
-      			<div class="text">
-        				<b class="title">مدیریت پرسنل</b>
-        				<div class="description">مشاهده وضعیت حضور و فعالیت کارکنان</div>
-      			</div>
-    		</div>
-    		<div class="card-342">
-      			<img class="icon-image" alt="" src="{% static 'daftarMain/images/lampicon.svg' %}">
-      			
-      			<div class="text">
-        				<div class="title-parent">
-          					<b class="title2">پروژه‌ها</b>
-          					<div class="description2">پروژه‌هایی که باید انجام بشن</div>
-        				</div>
-      			</div>
-    		</div>
-    		<div class="card-343">
-      			<img class="icon-image" alt="" src="{% static 'daftarMain/images/lampicon.svg' %}">
-      			
-      			<div class="text">
-        				<div class="title-group">
-          					<b class="title2">ویرایش پروفایل</b>
-          					<div class="description2">ویرایش اطلاعات مدیر و شرکت</div>
-        				</div>
-      			</div>
-    		</div>
-    		<div class="card-14">
-    		</div>
-    		<div class="card-141">
-    		</div>
-    		<div class="card-142">
-    		</div>
-    		<div class="card-143">
-    		</div>
-    		<!--img class="management-menu-child" alt="" src="{% static 'daftarMain/images/walking.svg' %}"-->
-    		
-    		<img class="undraw-undraw-undraw-undraw-un-icon" alt="" src="{% static 'daftarMain/images/walking.svg' %}">
-    		
-  	</div>
+    <div class="container">
+        <h1>{{ office_manager.full_name }}, INC </h1>
+
+        <h2>Employee List</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>In Office</th>
+                    <th>Leave Requested</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for employee, is_in_office, has_leave_request in employees %}
+                <tr>
+                    <td>
+                        <a href="{% url 'employee_detail' employee.id %}">
+                            {{ employee.first_name }} {{ employee.last_name }}
+                        </a>
+                    </td>
+                    <td>
+                        <input type="checkbox" disabled {% if is_in_office %}checked{% endif %}>
+                    </td>
+                    <td>
+                        <input type="checkbox" disabled {% if has_leave_request %}checked{% endif %}>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Buttons to navigate to other pages -->
+        <div>
+            <a href="{% url 'project_page' %}" class="button">Go to Projects</a>
+            <a href="{% url 'add_office_user' %}" class="button">Add Personnel</a>
+        </div>
+    </div>
 </body>
 </html>

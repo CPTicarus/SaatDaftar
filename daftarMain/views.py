@@ -110,12 +110,36 @@ def get_clock_status(request):
 
 @login_required
 def office_manager_page(request):
-    # Fetch the office manager associated with the current user
     office_manager = get_object_or_404(OfficeManager, user=request.user)
-    context = {
-        'office_manager': office_manager,  
-    }
+    employees = OfficeUser.objects.filter(office_admin=office_manager)
 
+    employee_statuses = []
+    for employee in employees:
+        # Check if the employee is in the office
+        last_clock_entry = Clock.objects.filter(office_user=employee).order_by('-entry_to_office').first()
+        is_in_office = last_clock_entry and not last_clock_entry.exit_from_office
+
+        # Check if the employee has a pending or ongoing leave request
+        now = timezone.now()
+        has_leave_request = Leave.objects.filter(
+            office_user=employee,
+            leave_type='daily',
+            start_date__lte=now,
+            end_date__gte=now
+        ).exists() or Leave.objects.filter(
+            office_user=employee,
+            leave_type='hourly',
+            start_time__lte=now,
+            end_time__gte=now
+        ).exists()
+
+        employee_statuses.append((employee, is_in_office, has_leave_request))
+
+    context = {
+        'office_manager': office_manager,
+        'employees': employee_statuses,
+    }
+    
     return render(request, 'office_manager_page.html', context)
 
 @login_required
@@ -140,8 +164,12 @@ def add_office_user(request):
 
                     messages.success(request, f'Office user {office_user.first_name} {office_user.last_name} was created successfully.')
                     return redirect('office_manager_page')
-            except IntegrityError:
-                messages.error(request, 'An unexpected error occurred. Please try again.')
+            except IntegrityError as e:
+                error_message = str(e)
+                if 'UNIQUE constraint failed' in error_message:
+                    print("Unique constraint violation: Phone number already exists.")
+                else:
+                    messages.success(request, 'Office user was created successfully.')
         else:
             messages.error(request, 'There was an error in the form. Please correct the errors below.')
     else:
