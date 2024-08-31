@@ -1,16 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa"> <!-- Assuming Farsi or Arabic as the RTL language -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Office User Page</title>
+    <title>صفحه کاربر دفتر</title> <!-- "Office User Page" in Farsi/Arabic -->
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
             background-color: #f5f5f5;
             color: #333;
+            direction: rtl; /* Set direction to right-to-left */
         }
+
         .container {
             background: #fff;
             border-radius: 8px;
@@ -20,10 +22,12 @@
             margin: auto;
             text-align: center;
         }
+
         h1 {
             color: #222;
             margin-bottom: 20px;
         }
+
         .button {
             padding: 10px 20px;
             margin: 10px 5px;
@@ -37,13 +41,16 @@
             max-width: 200px;
             display: inline-block;
         }
+
         .button:hover {
             background-color: #555;
         }
+
         .button:disabled {
             background-color: #ccc;
             cursor: not-allowed;
         }
+
         /* Style for the modal (pop-up) */
         .modal {
             display: none;
@@ -58,6 +65,7 @@
             justify-content: center;
             align-items: center;
         }
+
         .modal-content {
             background-color: #fefefe;
             margin: auto;
@@ -65,14 +73,16 @@
             border: 1px solid #888;
             width: 80%;
             max-width: 500px;
-            text-align: left;
+            text-align: right; /* Align text to the right */
             border-radius: 8px;
         }
+
         .modal-header, .modal-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+
         .modal-footer {
             padding-top: 10px;
         }
@@ -80,19 +90,19 @@
 </head>
 <body>
     <div class="container">
-        <h1>Welcome, {{ office_user.first_name }} {{ office_user.last_name }}</h1>
+        <h1>خوش آمدید، {{ office_user.first_name }} {{ office_user.last_name }}</h1> <!-- "Welcome, User Name" -->
 
-        <button id="register-entry-btn" class="button">Register Entry</button>
-        <button id="register-exit-btn" class="button">Register Exit</button>
-        <button id="leave-btn" class="button" onclick="window.location.href='{% url 'leave_page' %}'">Request Leave</button>
-        <button id="submit-request-btn" class="button" onclick="window.location.href='{% url 'submit_request' %}'">Submit Request</button>
+        <button id="register-entry-btn" class="button">ثبت ورود</button> <!-- "Register Entry" -->
+        <button id="register-exit-btn" class="button">ثبت خروج</button> <!-- "Register Exit" -->
+        <button id="leave-btn" class="button" onclick="window.location.href='{% url 'leave_page' %}'">درخواست مرخصی</button> <!-- "Request Leave" -->
+        <button id="submit-request-btn" class="button" onclick="window.location.href='{% url 'submit_request' %}'">ثبت درخواست</button> <!-- "Submit Request" -->
     </div>
 
     <!-- Modal for selecting projects -->
     <div id="projectModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Select Projects Worked On</h3>
+                <h3>انتخاب پروژه‌های کار شده</h3> <!-- "Select Projects Worked On" -->
                 <span id="closeModal" style="cursor:pointer;">&times;</span>
             </div>
             <form id="projectForm">
@@ -106,7 +116,7 @@
                     {% endfor %}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="submitProjects" class="button">Submit</button>
+                    <button type="button" id="submitProjects" class="button">ثبت</button> <!-- "Submit" -->
                 </div>
             </form>
         </div>
@@ -169,4 +179,5 @@
     </script>
 </body>
 </html>
+
 

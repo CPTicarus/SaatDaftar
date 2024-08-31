@@ -154,15 +154,20 @@ def leave_page(request):
     
     if request.method == "POST":
         # Handling Hourly Leave Request
+        hourly_date = request.POST.get('hourly_date')
         hourly_start_time = request.POST.get('hourly_start_time')
         hourly_end_time = request.POST.get('hourly_end_time')
         
-        if hourly_start_time and hourly_end_time:
+        if hourly_date and hourly_start_time and hourly_end_time:
+            # Combine date and time into datetime objects
+            start_datetime = datetime.strptime(f"{hourly_date} {hourly_start_time}", "%Y-%m-%d %H:%M")
+            end_datetime = datetime.strptime(f"{hourly_date} {hourly_end_time}", "%Y-%m-%d %H:%M")
+            
             Leave.objects.create(
                 office_user=office_user,
                 leave_type='hourly',
-                start_time=hourly_start_time,
-                end_time=hourly_end_time,
+                start_time=start_datetime,
+                end_time=end_datetime,
                 approved=None  # Set to None to mark as pending by default
             )
 
@@ -206,7 +211,6 @@ def approve_leave(request, leave_id):
 def deny_leave(request, leave_id):
     leave = get_object_or_404(Leave, id=leave_id)
     
-    # Only allow office managers to deny leave
     if hasattr(request.user, 'officemanager'):  # Ensure the user has an associated OfficeManager
         leave.approved = False
         leave.save()
@@ -218,10 +222,7 @@ def deny_leave(request, leave_id):
 def employee_detail(request, employee_id):
     employee = get_object_or_404(OfficeUser, id=employee_id)
 
-    # Get the employee's last clock entry
     last_clock_entry = Clock.objects.filter(office_user=employee).order_by('-entry_to_office').first()
-
-    # Get the employee's pending leave requests
     leave_requests = Leave.objects.filter(office_user=employee, approved=None).order_by('-start_date')
 
     context = {

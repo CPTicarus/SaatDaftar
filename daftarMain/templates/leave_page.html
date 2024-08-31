@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Request Leave</title>
+    <title>درخواست مرخصی</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
             background-color: #f4f4f4;
+            direction: rtl;
         }
-
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -20,33 +20,29 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
         h1, h2 {
             color: #333;
+            text-align: right;
         }
-
         .form-group {
             margin-bottom: 15px;
+            text-align: right;
         }
-
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
             color: #555;
         }
-
-        input[type="date"],
-        input[type="datetime-local"],
-        textarea {
+        input, textarea {
             width: 100%;
             padding: 8px;
             margin-top: 5px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
+            text-align: right;
         }
-
         button {
             background-color: #4CAF50;
             color: white;
@@ -56,45 +52,34 @@
             cursor: pointer;
             margin-top: 10px;
         }
-
         button:hover {
             background-color: #45a049;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            text-align: right;
         }
-
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-
         th, td {
             padding: 12px;
-            text-align: left;
+            text-align: right;
         }
-
         th {
             background-color: #f2f2f2;
         }
-
         .status-approved {
             color: green;
             font-weight: bold;
         }
-
         .status-denied {
             color: red;
             font-weight: bold;
         }
-
         .status-pending {
             color: orange;
             font-weight: bold;
         }
-
         .btn-secondary {
             display: inline-block;
             padding: 8px 16px;
@@ -103,8 +88,8 @@
             text-decoration: none;
             border-radius: 4px;
             margin-top: 20px;
+            text-align: center;
         }
-
         .btn-secondary:hover {
             background-color: #bbb;
         }
@@ -112,57 +97,62 @@
 </head>
 <body>
     <div class="container">
-        <h1>Request Leave</h1>
+        <h1>درخواست مرخصی</h1>
 
         <form method="POST" class="form-leave-request">
             {% csrf_token %}
 
             <!-- Hourly leave section -->
-            <h2>Hourly Leave</h2>
+            <h2>مرخصی ساعتی</h2>
             <div class="form-group">
-                <label for="hourly_start_time">Start Time:</label>
-                <input type="datetime-local" id="hourly_start_time" name="hourly_start_time" class="form-control">
+                <label for="hourly_date">تاریخ:</label> <!-- "Date" -->
+                <input type="date" id="hourly_date" name="hourly_date" class="form-control">
             </div>
 
             <div class="form-group">
-                <label for="hourly_end_time">End Time:</label>
-                <input type="datetime-local" id="hourly_end_time" name="hourly_end_time" class="form-control">
+                <label for="hourly_start_time">زمان شروع:</label> <!-- "Start Time" -->
+                <input type="time" id="hourly_start_time" name="hourly_start_time" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="hourly_end_time">زمان پایان:</label> <!-- "End Time" -->
+                <input type="time" id="hourly_end_time" name="hourly_end_time" class="form-control">
             </div>
 
             <hr>
 
             <!-- Daily leave section -->
-            <h2>Daily Leave</h2>
+            <h2>مرخصی روزانه</h2>
             <div class="form-group">
-                <label for="start_date">Start Date:</label>
+                <label for="start_date">تاریخ شروع:</label> <!-- "Start Date" -->
                 <input type="date" id="start_date" name="start_date" class="form-control">
             </div>
 
             <div class="form-group">
-                <label for="end_date">End Date:</label>
+                <label for="end_date">تاریخ پایان:</label> <!-- "End Date" -->
                 <input type="date" id="end_date" name="end_date" class="form-control">
             </div>
 
             <div class="form-group">
-                <label for="leave_reason">Reason:</label>
+                <label for="leave_reason">دلیل:</label> <!-- "Reason" -->
                 <textarea id="leave_reason" name="leave_reason" class="form-control"></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary">Submit Leave Request</button>
+            <button type="submit" class="btn btn-primary">ارسال درخواست مرخصی</button> <!-- "Submit Leave Request" -->
         </form>
 
         <hr>
 
         <!-- Display existing leave requests -->
-        <h2>Your Leave Requests</h2>
+        <h2>درخواست‌های مرخصی شما</h2> <!-- "Your Leave Requests" -->
         <table>
             <thead>
                 <tr>
-                    <th>Type</th>
-                    <th>Start Date/Time</th>
-                    <th>End Date/Time</th>
-                    <th>Reason</th>
-                    <th>Status</th>
+                    <th>نوع</th> <!-- "Type" -->
+                    <th>تاریخ/زمان شروع</th> <!-- "Start Date/Time" -->
+                    <th>تاریخ/زمان پایان</th> <!-- "End Date/Time" -->
+                    <th>دلیل</th> <!-- "Reason" -->
+                    <th>وضعیت</th> <!-- "Status" -->
                 </tr>
             </thead>
             <tbody>
@@ -186,11 +176,11 @@
                     <td>{{ leave.reason }}</td>
                     <td>
                         {% if leave.approved is True %}
-                            <span class="status-approved">Approved</span>
+                            <span class="status-approved">تایید شده</span> <!-- "Approved" -->
                         {% elif leave.approved is False %}
-                            <span class="status-denied">Denied</span>
+                            <span class="status-denied">رد شده</span> <!-- "Denied" -->
                         {% else %}
-                            <span class="status-pending">Pending</span>
+                            <span class="status-pending">در انتظار</span> <!-- "Pending" -->
                         {% endif %}
                     </td>
                 </tr>
@@ -198,7 +188,8 @@
             </tbody>
         </table>
 
-        <a href="{% url 'office_user_page' %}" class="btn-secondary">Back to Office User Page</a>
+        <a href="{% url 'office_user_page' %}" class="btn-secondary">بازگشت به صفحه کاربر دفتر</a> <!-- "Back to Office User Page" -->
     </div>
 </body>
 </html>
+
