@@ -10,7 +10,9 @@
             margin: 20px;
             background-color: #f5f5f5; /* Light background color */
             color: #333; /* Dark text color */
+            direction: rtl; /* Set direction to right-to-left */
         }
+
         .container {
             background: #fff; /* White background for content */
             border-radius: 8px;
@@ -18,36 +20,46 @@
             padding: 20px;
             max-width: 800px;
             margin: auto;
+            text-align: right; /* Align text to the right */
         }
+
         h1 {
             color: #222; /* Darker color for headings */
             margin-bottom: 20px;
             text-align: center;
         }
+
         .messages {
             margin-bottom: 20px;
             padding: 10px;
             border-radius: 4px;
+            text-align: right; /* Align messages to the right */
         }
+
         .messages.success {
             background-color: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
         }
+
         .messages.error {
             background-color: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+
         .form-group {
             margin-bottom: 15px;
         }
+
         .form-group label {
             display: block;
             margin-bottom: 5px;
             color: #555;
             font-weight: bold;
+            text-align: right; /* Align labels to the right */
         }
+
         .form-group input,
         .form-group textarea {
             width: 100%;
@@ -55,13 +67,17 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 16px;
+            text-align: right; /* Align input text to the right */
         }
+
         .form-group textarea {
             resize: vertical;
         }
+
         .form-group input[type="file"] {
             padding: 3px;
         }
+
         button {
             padding: 10px 20px;
             margin: 10px 0;
@@ -73,9 +89,11 @@
             cursor: pointer;
             width: 100%;
         }
+
         button:hover {
             background-color: #555; /* Slightly lighter background on hover */
         }
+
         .back-link {
             display: inline-block;
             margin-top: 20px;
@@ -85,6 +103,7 @@
             text-align: center;
             width: 100%;
         }
+
         .back-link:hover {
             text-decoration: underline;
             color: #333; /* Dark gray text on hover */
@@ -93,7 +112,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Add New Employee</h1>
+        <h1>افزودن کارمند جدید</h1>
 
         <!-- Display messages -->
         {% if messages %}
@@ -108,7 +127,7 @@
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Create Employee</button>
+            <button type="submit">ایجاد کارمند</button>
         </form>
 
         <!-- Display form errors -->
@@ -127,7 +146,7 @@
             </div>
         {% endif %}
 
-        <a href="{% url 'office_manager_page' %}" class="back-link">Back to Manager Page</a>
+        <a href="{% url 'office_manager_page' %}" class="back-link">بازگشت به صفحه مدیر</a> 
     </div>
 </body>
 </html>

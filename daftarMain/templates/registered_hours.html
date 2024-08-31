@@ -1,29 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registered Working Hours</title>
+    <title>ساعات کار ثبت شده</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
             padding: 0;
+            direction: rtl; /* Set the direction to right-to-left */
+            text-align: right; /* Align text to the right */
         }
+
         .messages {
             list-style-type: none;
             padding: 0;
         }
+
         .messages .alert {
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 5px;
         }
+
         .messages .alert.success {
             background-color: #d4edda;
             color: #155724;
         }
+
         .messages .alert.error {
             background-color: #f8d7da;
             color: #721c24;
@@ -46,16 +52,20 @@
 
         form {
             margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: flex-end; /* Align items to the right */
         }
 
         label {
-            margin-right: 10px;
+            margin-left: 10px; /* Adjust for RTL layout */
             font-weight: bold;
         }
 
         input[type="date"] {
             padding: 5px;
-            margin-right: 10px;
+            margin-left: 10px; /* Adjust for RTL layout */
             border: 1px solid #ccc;
             border-radius: 3px;
             width: 200px;
@@ -85,11 +95,12 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            direction: rtl; /* Set the table direction to RTL */
         }
 
         th, td {
             padding: 10px;
-            text-align: left;
+            text-align: right; /* Align text to the right */
             border-bottom: 1px solid #ddd;
         }
 
@@ -132,11 +143,46 @@
         .delete-button:hover {
             background-color: #c82333;
         }
+
+        .print-button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 20px; /* Adjust for RTL layout */
+        }
+
+        .print-button:hover {
+            background-color: #218838;
+        }
+
+        .print-options {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .print-options input {
+            margin-left: 10px; /* Adjust for RTL layout */
+        }
+
+        @media print {
+            .delete-button,   
+            .delete-form,     
+            .back-link,       
+            .delete-link,     
+            .action-buttons,  
+            button:not(#printButton),  
+            form:not(.date-form) {     
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Messages Block -->
         {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
@@ -145,95 +191,161 @@
             </ul>
         {% endif %}
 
-        <h2>Working Hours for {{ employee.first_name }} {{ employee.last_name }}</h2>
+        <h2>ساعات کاری {{ employee.first_name }} {{ employee.last_name }}</h2>
 
-        <!-- Top section with Calculate and Reward/Punishment buttons -->
-        <form method="get" style="display: flex; gap: 20px; align-items: center;">
+        <form method="get">
             <div>
-                <label for="start_date">Start Date:</label>
+                <label for="start_date">تاریخ شروع:</label>
                 <input type="date" id="start_date" name="start_date" required value="{{ start_date }}">
             </div>
 
             <div>
-                <label for="end_date">End Date:</label>
+                <label for="end_date">تاریخ پایان:</label>
                 <input type="date" id="end_date" name="end_date" required value="{{ end_date }}">
             </div>
 
             <div>
-                <button type="submit">Calculate</button>
+                <button type="submit">محاسبه</button>
             </div>
 
-            <!-- Reward/Punishment Button -->
             <div>
                 <button type="button" onclick="document.getElementById('rewardForm').style.display='block'">
-                    Add Reward/Punishment
+                    اضافه کردن پاداش/تنبیه
                 </button>
+            </div>
+
+            <div>
+                <button type="button" class="print-button" onclick="togglePrintOptions()">چاپ</button>
             </div>
         </form>
 
-        <!-- Reward/Punishment Form (Initially Hidden) -->
         <div id="rewardForm" style="display:none; margin-top: 20px;">
-            <h3>Add Reward/Punishment</h3>
+            <h3>اضافه کردن پاداش/تنبیه</h3>
             <form method="post" action="{% url 'add_reward_punishment' employee.id %}">
                 {% csrf_token %}
                 <div>
-                    <label for="date">Date:</label>
+                    <label for="date">تاریخ:</label>
                     <input type="date" id="date" name="date" required>
                 </div>
 
                 <div>
-                    <label for="hours">Hours:</label>
+                    <label for="hours">ساعت:</label>
                     <input type="number" id="hours" name="hours" step="0.01" required>
                 </div>
 
                 <div>
-                    <label for="type">Type:</label>
+                    <label for="type">نوع:</label>
                     <select id="type" name="type" required>
-                        <option value="reward">Reward (Add Hours)</option>
-                        <option value="punishment">Punishment (Subtract Hours)</option>
+                        <option value="reward">پاداش (افزودن ساعت)</option>
+                        <option value="punishment">تنبیه (کاهش ساعت)</option>
                     </select>
                 </div>
 
                 <div>
-                    <button type="submit">Submit</button>
+                    <button type="submit">ارسال</button>
                 </div>
             </form>
         </div>
 
         {% if total_hours is not None %}
-            <h3>Total Hours Worked: {{ total_hours|floatformat:2 }} hours</h3>
+            <h3>ساعات کار کل: {{ total_hours|floatformat:2 }} ساعت</h3>
         {% endif %}
 
-        <h3>Registered Hours</h3>
+        <div id="printOptions" class="print-options">
+            <h3>انتخاب گزینه‌ها برای نمایش</h3>
+            <label><input type="checkbox" id="showHours" onclick="toggleTableRows()"> نمایش ساعات ثبت شده روزانه</label>
+            <label><input type="checkbox" id="showRewards" onclick="toggleTableRows()"> نمایش پاداش‌ها/تنبیهات</label>
+        </div>
+
+        <h3>ساعات ثبت شده</h3>
         <table>
             <thead>
                 <tr>
-                    <th>Entry Time</th>
-                    <th>Exit Time</th>
-                    <th>Hours Worked</th>
-                    <th>Action</th>
+                    <th>شماره</th>
+                    <th>تاریخ</th>
+                    <th>ساعت ورود</th>
+                    <th>ساعت خروج</th>
+                    <th>ساعات کاری</th>
+                    <th>نوع</th>
+                    <th>عملیات</th>
                 </tr>
             </thead>
-            <tbody>
-                {% for entry in clock_entries %}
-                    <tr>
-                        <td>{{ entry.entry_to_office }}</td>
-                        <td>{{ entry.exit_from_office }}</td>
-                        <td>{{ entry.hours_worked|floatformat:2 }}</td>
-                        <td>
-                            <!-- Delete Button -->
-                            <a href="{% url 'delete_registered_hour' employee.id entry.id %}" 
-                               onclick="return confirm('Are you sure you want to delete this entry?');">
-                                Delete
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
+            <tbody id="tableBody">
+                {% with previous_date=None %}
+                    {% for entry in clock_entries %}
+                        {% if forloop.first or previous_date != entry.entry_to_office.date %}
+                            {% with previous_date=entry.entry_to_office.date %}
+                                <tr class="{% if entry.is_reward_punishment %}reward-row{% else %}hours-row{% endif %}">
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ entry.entry_to_office.date }}</td> <!-- Display date once per change -->
+                                    <td>{{ entry.entry_to_office.time }}</td>
+                                    <td>{{ entry.exit_from_office.time }}</td>
+                                    <td>{{ entry.hours_worked|floatformat:2 }}</td>
+                                    <td>{% if entry.is_reward_punishment %}Reward/Punishment{% else %}Regular{% endif %}</td>
+                                    <td>
+                                        <a href="{% url 'delete_registered_hour' employee.id entry.id %}" 
+                                           onclick="return confirm('Are you sure you want to delete this entry?');">
+                                            Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endwith %}
+                        {% else %}
+                            <tr class="{% if entry.is_reward_punishment %}reward-row{% else %}hours-row{% endif %}">
+                                <td>{{ forloop.counter }}</td>
+                                <td></td> <!-- Empty date cell since date has not changed -->
+                                <td>{{ entry.entry_to_office.time }}</td>
+                                <td>{{ entry.exit_from_office.time }}</td>
+                                <td>{{ entry.hours_worked|floatformat:2 }}</td>
+                                <td>{% if entry.is_reward_punishment %}Reward/Punishment{% else %}Regular{% endif %}</td>
+                                <td>
+                                    <a href="{% url 'delete_registered_hour' employee.id entry.id %}" 
+                                       onclick="return confirm('Are you sure you want to delete this entry?');">
+                                        Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endwith %}
             </tbody>
+            
         </table>
 
-        <a href="{% url 'employee_detail' employee.id %}" class="back-link">Back to Employee Details</a>
+        <a href="{% url 'employee_detail' employee.id %}" class="back-link">بازگشت به جزئیات کارمند</a>
     </div>
-</body>
 
+    <script>
+        let printOptionsShown = false;
+
+        function togglePrintOptions() {
+            const printOptions = document.getElementById('printOptions');
+            if (!printOptionsShown) {
+                printOptions.style.display = 'block';
+                printOptionsShown = true;
+            } else {
+                window.print();
+            }
+        }
+
+        function toggleTableRows() {
+            const showHours = document.getElementById('showHours').checked;
+            const showRewards = document.getElementById('showRewards').checked;
+            const rows = document.getElementById('tableBody').getElementsByTagName('tr');
+
+            for (let row of rows) {
+                const isReward = row.classList.contains('reward-row');
+                const isRegular = row.classList.contains('hours-row');
+
+                if (isReward && showRewards) {
+                    row.style.display = '';
+                } else if (isRegular && showHours) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
+    </script>
+</body>
 </html>
