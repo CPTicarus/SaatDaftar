@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Details</title>
+    <title>جزئیات کارمند</title> 
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
             background-color: #d0d0d0;
             color: #333;
+            direction: rtl; /* Set direction to RTL */
+            text-align: right; /* Align text to the right */
         }
         .container {
             background: #fff;
@@ -81,71 +83,72 @@
         <h2>{{ employee.first_name }} {{ employee.last_name }}</h2>
 
         <div class="details">
-            <p><strong>Staff Number:</strong> {{ employee.staff_number }}</p>
-            <p><strong>Address:</strong> {{ employee.address }}</p>
-            <p><strong>Phone Number:</strong> {{ employee.phone }}</p>
-            <p><strong>Code Meli:</strong> {{ employee.code_meli }}</p>
-            <p><strong>Birth Date:</strong> {{ employee.birth_date }}</p>
+            <p><strong>شماره کارمند:</strong> {{ employee.staff_number }}</p>
+            <p><strong>آدرس:</strong> {{ employee.address }}</p>
+            <p><strong>شماره تلفن:</strong> {{ employee.phone }}</p>
+            <p><strong>کد ملی:</strong> {{ employee.code_meli }}</p>
+            <p><strong>تاریخ تولد:</strong> {{ employee.birth_date }}</p>
 
             {% if employee.staff_pic %}
-                <p><strong>Picture:</strong></p>
-                <img src="{{ employee.staff_pic.url }}" alt="{{ employee.first_name }}'s Picture" width="200">
+                <p><strong>تصویر:</strong></p>
+                <img src="{{ employee.staff_pic.url }}" alt="تصویر {{ employee.first_name }}" width="200">
             {% else %}
-                <p><strong>Picture:</strong> No picture available.</p>
+                <p><strong>تصویر:</strong> تصویری موجود نیست.</p>
             {% endif %}
 
-            <h3>Edit Information</h3>
-            <a href="{% url 'edit_employee' employee.id %}" class="button">Edit Employee</a>
+            <h3>ویرایش اطلاعات</h3>
+            <a href="{% url 'edit_employee' employee.id %}" class="button">ویرایش کارمند</a>
             
-            <h3>View Registered Hours</h3>
-            <a href="{% url 'registered_hours' employee.id %}" class="button">View Registered Hours</a>
+            <h3>مشاهده ساعات ثبت شده</h3>
+            <a href="{% url 'registered_hours' employee.id %}" class="button">مشاهده ساعات ثبت شده</a>
         </div>
 
-        <h3>Last Clock Entry</h3>
+        <h3>آخرین ورود به سیستم</h3>
         {% if last_clock_entry %}
-            <p><strong>Entry to Office:</strong> {{ last_clock_entry.entry_to_office }}</p>
-            <p><strong>Exit from Office:</strong> {{ last_clock_entry.exit_from_office }}</p>
+            <p><strong>ورود به دفتر:</strong> {{ last_clock_entry.entry_to_office }}</p>
+            <p><strong>خروج از دفتر:</strong> {{ last_clock_entry.exit_from_office }}</p>
         {% else %}
-            <p>No clock entries found.</p>
+            <p>ورود به سیستم یافت نشد.</p>
         {% endif %}
 
-        <h3>Leave Requests</h3>
+        <h3>درخواست‌های مرخصی</h3>
         <div class="leave-requests">
             {% if leave_requests %}
                 <ul>
                     {% for leave in leave_requests %}
                     <li>
-                        {{ leave.leave_type }} leave from 
+                        {{ leave.leave_type }} از 
                         {% if leave.leave_type == 'daily' %}
                             {{ leave.start_date }} 
-                            to {{ leave.end_date }}
+                            تا {{ leave.end_date }}
                         {% elif leave.leave_type == 'hourly' %}
                             {{ leave.start_time }} 
-                            to {{ leave.end_time }}
+                            تا {{ leave.end_time }}
                         {% endif %} <br>
-                        <strong>Reason:</strong> {{ leave.reason }} <br>
+                        <strong>دلیل:</strong> {{ leave.reason }} <br>
 
                         <!-- Buttons to approve or deny the leave request -->
                         <div class="buttons">
                             <form method="post" action="{% url 'approve_leave' leave.id %}" style="display:inline;">
                                 {% csrf_token %}
-                                <button type="submit" class="button">Approve</button>
+                                <button type="submit" class="button">تایید</button>
                             </form>
                             <form method="post" action="{% url 'deny_leave' leave.id %}" style="display:inline;">
                                 {% csrf_token %}
-                                <button type="submit" class="button">Deny</button>
+                                <button type="submit" class="button">رد</button>
                             </form>
                         </div>
                     </li>
                     {% endfor %}
                 </ul>
             {% else %}
-                <p>No leave requests found.</p>
+                <p>درخواست مرخصی یافت نشد.</p>
             {% endif %}
         </div>
 
-        <a href="{% url 'office_manager_page' %}" class="back-link">Back to Manager Page</a>
+        <a href="{% url 'office_manager_page' %}" class="back-link">بازگشت به صفحه مدیر</a>
     </div>
 </body>
 </html>
+
 

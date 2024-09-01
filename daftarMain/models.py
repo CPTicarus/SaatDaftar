@@ -8,7 +8,7 @@ class OfficeManager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True) # remove null, blank = true
     full_name = models.CharField(max_length=50,null=True,blank=True)
     phone = models.CharField(max_length=15, unique=True)
-    birth_date = models.DateField(null=True, blank=True)
+    birth_date = jmodels.jDateField(null=True, blank=True)
     code_meli = models.CharField(max_length=10, null=True, blank=True)
     email = models.EmailField(max_length=254, null=True, blank=True)
 
@@ -28,7 +28,7 @@ class OfficeUser(models.Model):
     last_name = models.CharField(max_length=30)
     phone = models.CharField(max_length=15, unique=True)
     home_phone = models.CharField(max_length=15, unique=True, null=True, blank=True)
-    birth_date = models.DateField(null=True, blank=True)
+    birth_date = jmodels.jDateField(null=True, blank=True)
     code_meli = models.CharField(max_length=10)
     office_admin = models.ForeignKey(OfficeManager, on_delete=models.CASCADE, null=True, blank=True) # remove null, blank = true
     staff_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
@@ -46,8 +46,8 @@ class OfficeUser(models.Model):
     
 
 class Clock(models.Model):
-    entry_to_office = models.DateTimeField(null=True, blank=True)
-    exit_from_office = models.DateTimeField(null=True, blank=True)
+    entry_to_office = jmodels.jDateField(null=True, blank=True)
+    exit_from_office = jmodels.jDateField(null=True, blank=True)
     is_reward_punishment = models.BooleanField(default=False) 
     office_user = models.ForeignKey(OfficeUser, on_delete=models.PROTECT, null=True, blank=True) # remove null, blank = true
     projects = models.ManyToManyField('Project', related_name="clock_entries", blank=True)
@@ -89,7 +89,7 @@ class RegularRequest(models.Model):
     user = models.ForeignKey(OfficeUser, on_delete=models.CASCADE)
     request_type = models.CharField(max_length=20, choices=REQUEST_TYPES)
     message = models.TextField()
-    submitted_at = models.DateTimeField(default=timezone.now)
+    submitted_at = jmodels.jDateField(default=timezone.now)
 
     def __str__(self):
         return f"{self.get_request_type_display()} by {self.user.first_name} {self.user.last_name} on {self.submitted_at}"
@@ -98,8 +98,8 @@ class RegularRequest(models.Model):
 class Project(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
-    start_date = models.DateField()
-    end_date = models.DateField(null=True, blank=True)
+    start_date = jmodels.jDateField()
+    end_date = jmodels.jDateField(null=True, blank=True)
     assigned_users = models.ManyToManyField(OfficeUser, related_name='projects')
 
     def __str__(self):
@@ -113,7 +113,7 @@ class ProjectTimeLog(models.Model):
     office_user = models.ForeignKey(OfficeUser, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     hours_spent = models.FloatField(default=0)
-    log_date = models.DateField(auto_now_add=True)
+    log_date = jmodels.jDateField(auto_now_add=True)
 
     class Meta:
         unique_together = ('office_user', 'project', 'log_date')
