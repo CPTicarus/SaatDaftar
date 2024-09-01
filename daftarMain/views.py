@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 
 from .models import Clock, OfficeUser, OfficeManager, Leave, Project, ProjectTimeLog, RegularRequest
-from .forms import OfficeUserForm, RegularRequestForm, ProjectForm, ProjectSelectionForm
+from .forms import OfficeUserForm, RegularRequestForm, ProjectForm, ProjectSelectionForm,LeaveForm
 
 #To redirect logins 
 @login_required
@@ -151,47 +151,24 @@ def add_office_user(request):
 @login_required
 def leave_page(request):
     office_user = get_object_or_404(OfficeUser, user=request.user)
-    
+
     if request.method == "POST":
-        # Handling Hourly Leave Request
-        hourly_date = request.POST.get('hourly_date')
-        hourly_start_time = request.POST.get('hourly_start_time')
-        hourly_end_time = request.POST.get('hourly_end_time')
-        
-        if hourly_date and hourly_start_time and hourly_end_time:
-            # Combine date and time into datetime objects
-            start_datetime = datetime.strptime(f"{hourly_date} {hourly_start_time}", "%Y-%m-%d %H:%M")
-            end_datetime = datetime.strptime(f"{hourly_date} {hourly_end_time}", "%Y-%m-%d %H:%M")
-            
-            Leave.objects.create(
-                office_user=office_user,
-                leave_type='hourly',
-                start_time=start_datetime,
-                end_time=end_datetime,
-                approved=None  # Set to None to mark as pending by default
-            )
+        # Using the form to handle validation and save logic
+        form = LeaveForm(request.POST)
+        if form.is_valid():
+            leave = form.save(commit=False)
+            leave.office_user = office_user
+            leave.approved = None  # Set approval to pending by default
+            leave.save()
+            return redirect('office_user_page')
+    else:
+        form = LeaveForm()
 
-        # Handling Daily Leave Request
-        start_date = request.POST.get('start_date')
-        end_date = request.POST.get('end_date')
-        leave_reason = request.POST.get('leave_reason')
-
-        if start_date and end_date:
-            Leave.objects.create(
-                office_user=office_user,
-                leave_type='daily',
-                start_date=start_date,
-                end_date=end_date,
-                reason=leave_reason,
-                approved=None  # Set to None to mark as pending by default
-            )
-
-        return redirect('office_user_page')
-    
     # Fetch the user's leave requests
     leave_requests = Leave.objects.filter(office_user=office_user).order_by('-start_date', '-start_time')
 
     return render(request, 'leave_page.html', {
+        'form': form,
         'leave_requests': leave_requests
     })
 

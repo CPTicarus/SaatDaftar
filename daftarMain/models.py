@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django_jalali.db import models as jmodels
 
 
 class OfficeManager(models.Model):
@@ -65,11 +66,11 @@ class Leave(models.Model):
     office_user = models.ForeignKey(OfficeUser, on_delete=models.CASCADE)
     leave_type = models.CharField(max_length=10, choices=[('hourly', 'Hourly'), ('daily', 'Daily')])
     # hourly leave    
-    start_time = models.DateTimeField(null=True, blank=True)
-    end_time = models.DateTimeField(null=True, blank=True)
+    start_time =  jmodels.jDateTimeField(null=True, blank=True)
+    end_time =  jmodels.jDateTimeField(null=True, blank=True)
     # daily leave fields
-    start_date = models.DateField(null=True, blank=True)  
-    end_date = models.DateField(null=True, blank=True)   
+    start_date =  jmodels.jDateField(null=True, blank=True)
+    end_date =  jmodels.jDateField(null=True, blank=True) 
 
     reason = models.TextField(null=True, blank=True)
     approved = models.BooleanField(default=None, null=True, blank=True)

@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 django = "*"
 django-jalali-date = "*"
+pytz = "*"
+jdatetime = "*"
 
 [dev-packages]
 

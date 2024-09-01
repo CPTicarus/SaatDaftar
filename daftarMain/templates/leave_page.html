@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>درخواست مرخصی</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -93,49 +94,64 @@
         .btn-secondary:hover {
             background-color: #bbb;
         }
+        .hidden{
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>درخواست مرخصی</h1>
 
-        <form method="POST" class="form-leave-request">
+        <form method="POST" id="leaveForm">
             {% csrf_token %}
 
-            <!-- Hourly leave section -->
-            <h2>مرخصی ساعتی</h2>
+            <!-- Leave Type Selection -->
             <div class="form-group">
-                <label for="hourly_date">تاریخ:</label> <!-- "Date" -->
-                <input type="date" id="hourly_date" name="hourly_date" class="form-control">
+                <label for="leave_type">نوع مرخصی:</label> <!-- "Leave Type:" -->
+                <select id="leave_type" name="leave_type" class="form-control" required>
+                    <option value="">انتخاب کنید</option> <!-- "Select" -->
+                    <option value="hourly">ساعتی</option> <!-- "Hourly" -->
+                    <option value="daily">روزانه</option> <!-- "Daily" -->
+                </select>
             </div>
 
-            <div class="form-group">
-                <label for="hourly_start_time">زمان شروع:</label> <!-- "Start Time" -->
-                <input type="time" id="hourly_start_time" name="hourly_start_time" class="form-control">
+            <!-- Hourly Leave Fields -->
+            <div id="hourlyFields" class="hidden">
+                <h2>مرخصی ساعتی</h2>
+                <div class="form-group">
+                    <label for="hourly_date">تاریخ:</label> <!-- "Date" -->
+                    <input type="text" id="hourly_date" name="hourly_date" class="form-control datepicker">
+                </div>
+
+                <div class="form-group">
+                    <label for="hourly_start_time">زمان شروع:</label> <!-- "Start Time" -->
+                    <input type="time" id="hourly_start_time" name="hourly_start_time" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="hourly_end_time">زمان پایان:</label> <!-- "End Time" -->
+                    <input type="time" id="hourly_end_time" name="hourly_end_time" class="form-control">
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="hourly_end_time">زمان پایان:</label> <!-- "End Time" -->
-                <input type="time" id="hourly_end_time" name="hourly_end_time" class="form-control">
-            </div>
+            <!-- Daily Leave Fields -->
+            <div id="dailyFields" class="hidden">
+                <h2>مرخصی روزانه</h2>
+                <div class="form-group">
+                    <label for="start_date">تاریخ شروع:</label> <!-- "Start Date" -->
+                    <input type="text" id="start_date" name="start_date" class="form-control datepicker">
+                </div>
 
-            <hr>
+                <div class="form-group">
+                    <label for="end_date">تاریخ پایان:</label> <!-- "End Date" -->
+                    <input type="text" id="end_date" name="end_date" class="form-control datepicker">
+                </div>
 
-            <!-- Daily leave section -->
-            <h2>مرخصی روزانه</h2>
-            <div class="form-group">
-                <label for="start_date">تاریخ شروع:</label> <!-- "Start Date" -->
-                <input type="date" id="start_date" name="start_date" class="form-control">
-            </div>
-
-            <div class="form-group">
-                <label for="end_date">تاریخ پایان:</label> <!-- "End Date" -->
-                <input type="date" id="end_date" name="end_date" class="form-control">
-            </div>
-
-            <div class="form-group">
-                <label for="leave_reason">دلیل:</label> <!-- "Reason" -->
-                <textarea id="leave_reason" name="leave_reason" class="form-control"></textarea>
+                <div class="form-group">
+                    <label for="leave_reason">دلیل:</label> <!-- "Reason" -->
+                    <textarea id="leave_reason" name="leave_reason" class="form-control"></textarea>
+                </div>
             </div>
 
             <button type="submit" class="btn btn-primary">ارسال درخواست مرخصی</button> <!-- "Submit Leave Request" -->
@@ -190,6 +206,37 @@
 
         <a href="{% url 'office_user_page' %}" class="btn-secondary">بازگشت به صفحه کاربر دفتر</a> <!-- "Back to Office User Page" -->
     </div>
+
+    <!-- Include jQuery and Jalali Datepicker JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pwt-datepicker/dist/js/persian-datepicker.min.js"></script>
+    <script>
+        // Show/Hide Fields Based on Selected Leave Type
+        document.getElementById('leave_type').addEventListener('change', function () {
+            const leaveType = this.value;
+            const hourlyFields = document.getElementById('hourlyFields');
+            const dailyFields = document.getElementById('dailyFields');
+
+            if (leaveType === 'hourly') {
+                hourlyFields.classList.remove('hidden');
+                dailyFields.classList.add('hidden');
+            } else if (leaveType === 'daily') {
+                dailyFields.classList.remove('hidden');
+                hourlyFields.classList.add('hidden');
+            } else {
+                hourlyFields.classList.add('hidden');
+                dailyFields.classList.add('hidden');
+            }
+        });
+
+        // Initialize Jalali Datepickers
+        $(document).ready(function () {
+            $(".datepicker").persianDatepicker({
+                format: 'YYYY/MM/DD',
+                initialValueType: 'persian'
+            });
+        });
+    </script>
 </body>
 </html>
 

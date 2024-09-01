@@ -1,5 +1,6 @@
 from django import forms
-from .models import OfficeUser,RegularRequest,Project
+from .models import OfficeUser,RegularRequest,Project,Leave
+from django_jalali.forms.widgets import jDateInput, jDateTimeInput
 
 class OfficeUserForm(forms.ModelForm):
     class Meta:
@@ -33,3 +34,32 @@ class ProjectSelectionForm(forms.Form):
         widget=forms.CheckboxSelectMultiple,
         required=True
     )
+
+class LeaveForm(forms.ModelForm):
+    class Meta:
+        model = Leave
+        fields = ['leave_type', 'start_time', 'end_time', 'start_date', 'end_date', 'reason']
+        widgets = {
+            'start_time': jDateTimeInput(format='%Y-%m-%d %H:%M'),
+            'end_time': jDateTimeInput(format='%Y-%m-%d %H:%M'),
+            'start_date': jDateInput(format='%Y-%m-%d'),
+            'end_date': jDateInput(format='%Y-%m-%d'),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        leave_type = cleaned_data.get('leave_type')
+
+        if leave_type == 'hourly':
+            start_time = cleaned_data.get('start_time')
+            end_time = cleaned_data.get('end_time')
+            if not start_time or not end_time:
+                raise forms.ValidationError('Both start and end time are required for hourly leave.')
+
+        elif leave_type == 'daily':
+            start_date = cleaned_data.get('start_date')
+            end_date = cleaned_data.get('end_date')
+            if not start_date or not end_date:
+                raise forms.ValidationError('Both start and end date are required for daily leave.')
+
+        return cleaned_data
