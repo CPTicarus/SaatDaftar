@@ -4,7 +4,6 @@ from django_jalali.forms.widgets import jDateInput, jDateTimeInput
 
 class OfficeUserForm(forms.ModelForm):
     birth_date = forms.DateField(
-        widget=jDateInput(attrs={'class': 'form-control', 'placeholder': 'تاریخ تولد'}),
         required=False,
         label='تاریخ تولد'
     )
@@ -18,6 +17,7 @@ class OfficeUserForm(forms.ModelForm):
             'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'شماره موبایل'}),
             'home_phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'شماره تلفن ثابت'}),
             'code_meli': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'کد ملی'}),
+            'birth_date': jDateInput(attrs={'class': 'form-control', 'placeholder': 'YYYY-MM-DD'}),
             'staff_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'شماره پرسنلی'}),
             'staff_pic': forms.ClearableFileInput(attrs={'class': 'form-control', 'placeholder': 'عکس پرسنل'}),
             'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'آدرس'}),
