@@ -176,13 +176,25 @@
             .action-buttons,  
             button:not(#printButton),  
             form:not(.date-form) {     
-                display: none !important;
+                display: none;
+            }
+            .print-hidden {
+                display: none;  
+            }
+            .print-options{
+                display: none;
             }
         }
+        .print-hidden {
+            display: table-cell;
+        }
+        
     </style>
 </head>
 <body>
     <div class="container">
+        {% load jformat %}
+
         {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
@@ -196,12 +208,12 @@
         <form method="get">
             <div>
                 <label for="start_date">تاریخ شروع:</label>
-                <input type="date" id="start_date" name="start_date" required value="{{ start_date }}">
+                <input type="text" id="start_date" name="start_date" required value="{{ start_date}}">
             </div>
 
             <div>
                 <label for="end_date">تاریخ پایان:</label>
-                <input type="date" id="end_date" name="end_date" required value="{{ end_date }}">
+                <input type="text" id="end_date" name="end_date" required value="{{ end_date }}">
             </div>
 
             <div>
@@ -225,7 +237,7 @@
                 {% csrf_token %}
                 <div>
                     <label for="date">تاریخ:</label>
-                    <input type="date" id="date" name="date" required>
+                    <input type="text" id="date" name="date" required class="jalali-datepicker">
                 </div>
 
                 <div>
@@ -254,20 +266,20 @@
         <div id="printOptions" class="print-options">
             <h3>انتخاب گزینه‌ها برای نمایش</h3>
             <label><input type="checkbox" id="showHours" onclick="toggleTableRows()"> نمایش ساعات ثبت شده روزانه</label>
-            <label><input type="checkbox" id="showRewards" onclick="toggleTableRows()"> نمایش پاداش‌ها/تنبیهات</label>
+            <label><input type="checkbox" id="showRewards" onclick="toggleTableRows()"> نمایش پاداش‌ها/تنبیه ها</label>
         </div>
 
         <h3>ساعات ثبت شده</h3>
         <table>
             <thead>
                 <tr>
-                    <th>شماره</th>
+                    <th>ردیف</th>
                     <th>تاریخ</th>
                     <th>ساعت ورود</th>
                     <th>ساعت خروج</th>
                     <th>ساعات کاری</th>
                     <th>نوع</th>
-                    <th>عملیات</th>
+                    <th class="print-hidden">عملیات</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
@@ -277,12 +289,12 @@
                             {% with previous_date=entry.entry_to_office.date %}
                                 <tr class="{% if entry.is_reward_punishment %}reward-row{% else %}hours-row{% endif %}">
                                     <td>{{ forloop.counter }}</td>
-                                    <td>{{ entry.entry_to_office.date }}</td> <!-- Display date once per change -->
+                                    <td>{{ entry.entry_to_office.date }}</td>
                                     <td>{{ entry.entry_to_office.time }}</td>
                                     <td>{{ entry.exit_from_office.time }}</td>
                                     <td>{{ entry.hours_worked|floatformat:2 }}</td>
                                     <td>{% if entry.is_reward_punishment %}Reward/Punishment{% else %}Regular{% endif %}</td>
-                                    <td>
+                                    <td class="print-hidden">
                                         <a href="{% url 'delete_registered_hour' employee.id entry.id %}" 
                                            onclick="return confirm('Are you sure you want to delete this entry?');">
                                             Delete
@@ -298,7 +310,7 @@
                                 <td>{{ entry.exit_from_office.time }}</td>
                                 <td>{{ entry.hours_worked|floatformat:2 }}</td>
                                 <td>{% if entry.is_reward_punishment %}Reward/Punishment{% else %}Regular{% endif %}</td>
-                                <td>
+                                <td class="print-hidden">
                                     <a href="{% url 'delete_registered_hour' employee.id entry.id %}" 
                                        onclick="return confirm('Are you sure you want to delete this entry?');">
                                         Delete
@@ -309,7 +321,6 @@
                     {% endfor %}
                 {% endwith %}
             </tbody>
-            
         </table>
 
         <a href="{% url 'employee_detail' employee.id %}" class="back-link">بازگشت به جزئیات کارمند</a>
@@ -320,11 +331,20 @@
 
         function togglePrintOptions() {
             const printOptions = document.getElementById('printOptions');
+            const printHiddenCols = document.querySelectorAll('.print-hidden');
+        
             if (!printOptionsShown) {
                 printOptions.style.display = 'block';
                 printOptionsShown = true;
             } else {
+                // Hide the "عملیات" column before printing
+                printHiddenCols.forEach(col => col.style.display = 'none');
                 window.print();
+                // Optionally, restore the column visibility after printing
+                printHiddenCols.forEach(col => col.style.display = 'table-cell');
+                window.onbeforeprint = function(){
+                    document.getElementByClassName('print-options').style.display = 'none';
+                }
             }
         }
 
@@ -345,7 +365,7 @@
                     row.style.display = 'none';
                 }
             }
-        }
+        }   
     </script>
 </body>
 </html>
