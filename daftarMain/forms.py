@@ -5,7 +5,8 @@ from django_jalali.forms.widgets import jDateInput, jDateTimeInput
 class OfficeUserForm(forms.ModelForm):
     birth_date = forms.DateField(
         required=False,
-        label='تاریخ تولد'
+        label='تاریخ تولد',
+        input_formats=['%Y-%m-%d'],
     )
 
     class Meta:

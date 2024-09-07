@@ -1,8 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'admin/jquery.ui.datepicker.jalali/themes/base/jquery-ui.min.css' %}">
     <title>ویرایش کارمند</title>
     <style>
         body {
@@ -118,81 +120,98 @@
             <div class="form-group">
                 <label for="id_first_name">نام:</label>
                 <input type="text" name="first_name" id="id_first_name" value="{{ form.first_name.value }}" required>
+                <span class="error">{{ form.first_name.errors }}</span>
             </div>
             <div class="form-group">
                 <label for="id_last_name">نام خانوادگی:</label>
                 <input type="text" name="last_name" id="id_last_name" value="{{ form.last_name.value }}" required>
+                <span class="error">{{ form.last_name.errors }}</span>
             </div>
             <div class="form-group">
                 <label for="id_birth_date">تاریخ تولد:</label>
                 <input type="text" name="birth_date" id="id_birth_date" value="{{ form.birth_date.value }}">
+                <span class="error">{{ form.birth_date.errors }}</span>
             </div>
             <div class="form-group">
                 <label for="id_code_meli">کد ملی:</label>
                 <input type="text" name="code_meli" id="id_code_meli" value="{{ form.code_meli.value }}" required>
+                <span class="error">{{ form.code_meli.errors }}</span>
             </div>
             <div class="form-group">
                 <label for="id_home_phone">شماره تلفن ثابت:</label>
                 <input type="text" name="home_phone" id="id_home_phone" value="{{ form.home_phone.value }}">
+                <span class="error">{{ form.home_phone.errors }}</span>
             </div>
             <div class="form-group">
                 <label for="id_phone">شماره موبایل:</label>
                 <input type="text" name="phone" id="id_phone" value="{{ form.phone.value }}" required>
+                <span class="error">{{ form.phone.errors }}</span>
             </div>
             <div class="form-group">
                 <label for="id_staff_number">شماره پرسنلی:</label>
                 <input type="text" name="staff_number" id="id_staff_number" value="{{ form.staff_number.value }}">
+                <span class="error">{{ form.staff_number.errors }}</span>
             </div>
             <div class="form-group">
                 <label for="id_address">آدرس:</label>
                 <textarea name="address" id="id_address" rows="4">{{ form.address.value }}</textarea>
+                <span class="error">{{ form.address.errors }}</span>
             </div>
             <div class="form-group">
-                <label for="id_profile_picture">عکس پرسنل:</label>
-                <input type="file" name="profile_picture" id="id_profile_picture">
+                <label for="id_staff_pic">عکس پرسنل:</label>
+                <input type="file" name="staff_pic" id="id_staff_pic">
+                <span class="error">{{ form.staff_pic.errors }}</span>
             </div>
-
+        
             <!-- Additional fields -->
             <div class="form-group">
                 <label for="id_have_bime">آیا بیمه دارید؟:</label>
                 <input type="checkbox" name="have_bime" id="id_have_bime" {% if form.have_bime.value %}checked{% endif %}>
+                <span class="error">{{ form.have_bime.errors }}</span>
             </div>
             <div class="form-group">
                 <label for="id_code_bime">کد بیمه:</label>
                 <input type="text" name="code_bime" id="id_code_bime" value="{{ form.code_bime.value }}">
+                <span class="error">{{ form.code_bime.errors }}</span>
             </div>
             <div class="form-group">
                 <label for="id_family_phone_number">شماره تلفن خانواده:</label>
                 <input type="text" name="family_phone_number" id="id_family_phone_number" value="{{ form.family_phone_number.value }}">
+                <span class="error">{{ form.family_phone_number.errors }}</span>
             </div>
             <div class="form-group">
                 <label for="id_marital_status">وضعیت تاهل:</label>
                 <input type="checkbox" name="marital_status" id="id_marital_status" {% if form.marital_status.value %}checked{% endif %}>
+                <span class="error">{{ form.marital_status.errors }}</span>
             </div>
             <div class="form-group">
                 <label for="id_military_service_status">وضعیت خدمت سربازی:</label>
                 {{ form.military_service_status }}
+                <span class="error">{{ form.military_service_status.errors }}</span>
             </div>
             
             <div class="form-group">
                 <label for="id_childeren_count">تعداد فرزندان:</label>
                 <input type="text" name="childeren_count" id="id_childeren_count" value="{{ form.childeren_count.value }}">
+                <span class="error">{{ form.childeren_count.errors }}</span>
             </div>
-
+        
             <!-- New fields for username and password -->
             <div class="form-group">
                 <label for="id_new_username">نام کاربری جدید:</label>
-                <input type="text" name="new_username" id="id_new_username" value="{{ form.new_username.value }}">
+                <input type="text" name="new_username" id="id_new_username">
             </div>
             <div class="form-group">
                 <label for="id_new_password">رمز عبور جدید:</label>
                 <input type="password" name="new_password" id="id_new_password">
             </div>
-
+        
             <button type="submit">ذخیره تغییرات</button>
         </form>
-
+        
         <a href="{% url 'employee_detail' employee.id %}" class="back-link">انصراف</a>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+    <script src="{% static 'admin/js/django_jalali.min.js' %}"></script>
 </body>
 </html>

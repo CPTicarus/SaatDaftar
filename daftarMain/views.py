@@ -224,7 +224,6 @@ def edit_employee(request, employee_id):
             new_username = request.POST.get('new_username')
             new_password = request.POST.get('new_password')
 
-            # Update the username if provided
             if new_username and new_username != user.username:
                 if User.objects.filter(username=new_username).exists():
                     messages.error(request, 'The username is already taken.')
@@ -232,13 +231,16 @@ def edit_employee(request, employee_id):
                     user.username = new_username
                     user.save()
 
-            # Update the password if provided
             if new_password:
                 user.set_password(new_password)
                 user.save()
 
             messages.success(request, f'{employee.first_name} {employee.last_name} has been updated successfully.')
             return redirect('employee_detail', employee_id=employee.id)
+        else:
+            # Display form errors
+            print("Form errors:", form.errors)
+            messages.error(request, 'There was an error updating the employee.')
 
     else:
         form = OfficeUserForm(instance=employee)
@@ -247,6 +249,7 @@ def edit_employee(request, employee_id):
         'form': form,
         'employee': employee,
     })
+
 
 @login_required
 def project_popup(request):

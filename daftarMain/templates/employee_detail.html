@@ -1,9 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fa">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>جزئیات کارمند</title> 
+    <link rel="stylesheet" href="{% static 'admin/jquery.ui.datepicker.jalali/themes/base/jquery-ui.min.css' %}">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -80,6 +82,8 @@
 </head>
 <body>
     <div class="container">
+        {% load jformat %}
+        
         <h2>{{ employee.first_name }} {{ employee.last_name }}</h2>
 
         <div class="details">
@@ -87,8 +91,7 @@
             <p><strong>آدرس:</strong> {{ employee.address }}</p>
             <p><strong>شماره تلفن:</strong> {{ employee.phone }}</p>
             <p><strong>کد ملی:</strong> {{ employee.code_meli }}</p>
-            <p><strong>تاریخ تولد:</strong> {{ employee.birth_date }}</p>
-
+            <p><strong>تاریخ تولد:</strong> {{ employee.birth_date|jformat:"%Y/%m/%d" }}</p>
             {% if employee.staff_pic %}
                 <p><strong>تصویر:</strong></p>
                 <img src="{{ employee.staff_pic.url }}" alt="تصویر {{ employee.first_name }}" width="200">
@@ -148,6 +151,7 @@
 
         <a href="{% url 'office_manager_page' %}" class="back-link">بازگشت به صفحه مدیر</a>
     </div>
+    <script src="{% static 'admin/js/django_jalali.min.js' %}"></script>
 </body>
 </html>
 
