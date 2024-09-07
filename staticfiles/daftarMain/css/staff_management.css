@@ -210,26 +210,6 @@
     background-color: #ff0000;
     height: 8px;
 }
-.name-status1 {
-    position: absolute;
-    top: 42px;
-    right: 0px;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: flex-end;
-    gap: 6px;
-}
-.name-status2 {
-    position: absolute;
-    top: 84px;
-    right: 0px;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: flex-end;
-    gap: 6px;
-}
 .status7 {
     width: 8px;
     position: relative;
@@ -237,52 +217,12 @@
     background-color: #d6d6d4;
     height: 8px;
 }
-.name-status3 {
-    position: absolute;
-    top: 126px;
-    right: 0px;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: flex-end;
-    gap: 6px;
-}
-.name-status4 {
-    position: absolute;
-    top: 168px;
-    right: 0px;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: flex-end;
-    gap: 6px;
-}
-.name-status5 {
-    position: absolute;
-    top: 210px;
-    right: 0px;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: flex-end;
-    gap: 6px;
-}
 .status10 {
     width: 8px;
     position: relative;
     border-radius: 50%;
     background-color: #0500ff;
     height: 8px;
-}
-.name-status6 {
-    position: absolute;
-    top: 252px;
-    right: 0px;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: flex-end;
-    gap: 6px;
 }
 .name-status-col {
     position: absolute;
